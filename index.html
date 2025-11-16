@@ -34,8 +34,17 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
 
 <style>
+/* CSS Kustom dan Penyesuaian Responsivitas */
 body { margin:0; padding:0; font-family:'Rajdhani',sans-serif; background:black; overflow-x:hidden; }
 #grid-bg{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(0,230,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,0,212,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+#tsparticles-gtzps {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Di bawah konten utama */
+}
 .main-content-anim {animation: fadeInScale 1.2s ease-out forwards; opacity:0;}
 @keyframes fadeInScale {0%{opacity:0;transform:scale(0.97);}100%{opacity:1;transform:scale(1);}}
 .menu-item {transition: all 0.4s ease; cursor:pointer; animation: fadeUp 0.6s forwards; opacity:0; transform:translateY(0);}
@@ -47,138 +56,68 @@ body { margin:0; padding:0; font-family:'Rajdhani',sans-serif; background:black;
 .overlay.visible .overlay-content{transform:scale(1);}
 #music-bar-fill{background:linear-gradient(90deg,var(--tw-colors-neon-cyan),var(--tw-colors-neon-magenta),var(--tw-colors-neon-purple));transition:width 0.2s linear;}
 #toast{background:rgba(0,0,0,0.8);color:var(--tw-colors-neon-cyan);border:1px solid var(--tw-colors-neon-cyan);transition:opacity 0.5s ease, transform 0.5s ease;position:fixed;bottom:8px;left:50%;transform:translateX(-50%);padding:12px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;z-index:60;}
-/* Hapus efek hover pada tombol header di mobile */
-header button{transition:all 0.3s ease;}
-header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 25px currentColor/70;}
 #live-clock{font-size:1.25rem;padding:0.75rem 1.25rem;}
-.music-playing-pulse {
-  animation: musicPulse 1.5s infinite ease-in-out;
-}
+.music-playing-pulse { animation: musicPulse 1.5s infinite ease-in-out; }
 @keyframes musicPulse {
   0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
   50% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
 }
 
 /* Styling untuk Volume Slider */
-#volume-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 12px; 
-  height: 12px;
-  border-radius: 50%; 
-  background: #ff00d4; /* Neon Magenta */
-  box-shadow: 0 0 5px #ff00d4;
-  cursor: pointer;
-}
-#volume-slider::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ff00d4;
-  box-shadow: 0 0 5px #ff00d4;
-  cursor: pointer;
-  border: none;
-}
+#volume-slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ff00d4; box-shadow: 0 0 5px #ff00d4; cursor: pointer;}
+#volume-slider::-moz-range-thumb {width: 12px; height: 12px; border-radius: 50%; background: #ff00d4; box-shadow: 0 0 5px #ff00d4; cursor: pointer; border: none;}
 
-/* KUSTOMISASI BARU: Container Utama (Wrapper) */
-#layout-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100vw;
-}
+/* Container Utama (Wrapper) */
+#layout-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; }
+.layout-9-16 { width: min(500px, calc(100vh * 9 / 16)); max-width: 100%; }
+.layout-16-9 { width: min(1280px, 90vw); max-width: 100%; }
+#main-content { margin: 0 auto; transition: width 0.5s ease; min-height: 100vh; width: 100%; }
 
-/* Default state: 9:16 aspect ratio (Portrait/Mobile view) */
-.layout-9-16 {
-    /* Batasi lebar menjadi maksimal 500px atau 9/16 dari viewport height (untuk tampilan desktop) */
-    width: min(500px, calc(100vh * 9 / 16)); 
-    max-width: 100%;
+/* Perbaikan untuk Posisi Fixed */
+.fixed-top-left { position: fixed !important; top: 6px; left: 6px; z-index: 30; }
+.fixed-header-right { 
+    position: fixed !important; top: 6px; right: 6px; z-index: 30;
+    display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; 
+    justify-content: flex-end; max-width: 95vw; 
 }
+.func-group { display: flex; align-items: center; gap: 8px; order: 1; }
+.action-group { display: flex; align-items: center; gap: 8px; order: 2; margin-top: 0; }
 
-/* 16:9 aspect ratio (Landscape/Desktop view) */
-.layout-16-9 {
-    width: min(1280px, 90vw);
-    max-width: 100%; 
+/* Styling Button Aksi */
+.action-button {
+    transition: all 0.3s ease; padding: 12px 24px; font-weight: bold; border-width: 2px;
+    border-radius: 12px; text-transform: uppercase; color: white; 
+    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
 }
-
-#main-content {
-    margin: 0 auto; 
-    transition: width 0.5s ease;
-    min-height: 100vh;
-    width: 100%;
+#about-btn { border-color: #ff00d4; box-shadow: 0 0 10px rgba(255, 0, 212, 0.5); }
+#about-btn:hover { background: rgba(255, 0, 212, 0.2); }
+#info-btn { border-color: #00e6ff; box-shadow: 0 0 10px rgba(0, 230, 255, 0.5); }
+#info-btn:hover { background: rgba(0, 230, 255, 0.2); }
+/* Tombol Fungsional Bulat */
+.func-button {
+    transition: all 0.3s ease; padding: 12px; border-width: 2px;
+    border-radius: 9999px; color: white; background: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(5px);
 }
+#toggle-aspect-ratio-btn { border-color: #9d00ff; box-shadow: 0 0 8px rgba(157, 0, 255, 0.5); color: #9d00ff; }
+#toggle-aspect-ratio-btn:hover { background: rgba(157, 0, 255, 0.2); }
+#music-toggle-btn { border-color: #00e6ff; box-shadow: 0 0 8px rgba(0, 230, 255, 0.5); color: #00e6ff; }
+#music-toggle-btn:hover { background: rgba(0, 230, 255, 0.2); }
 
-/* Perbaikan untuk Posisi Fixed: Kunci di luar wrapper, di kanan/kiri layar */
-.fixed-top-left {
-    position: fixed !important; 
-    top: 6px;
-    left: 6px;
-    z-index: 30;
-}
 
-.fixed-top-right {
-    position: fixed !important; 
-    top: 6px;
-    right: 6px;
-    z-index: 30;
-    /* Tambahkan flex-wrap: wrap untuk header di mode 9:16 agar tombol masuk ke baris baru */
-    flex-wrap: wrap; 
-    justify-content: flex-end; /* Dorong semua elemen ke kanan */
-    max-width: 95vw; /* Batasi lebar agar tidak melebihi viewport */
-}
-
-/* Penyesuaian khusus untuk mode 9:16/Mobile */
+/* Media Queries */
 @media (max-width: 767px) {
-    .fixed-top-right {
-        /* Pindahkan tombol ke bawah tombol status di kanan atas */
-        top: 6px;
-        right: 6px;
-        gap: 6px; /* Kurangi jarak antar tombol */
-    }
-    .fixed-top-right > button {
-        /* Kurangi padding tombol agar lebih ringkas */
-        padding-left: 12px;
-        padding-right: 12px;
-        font-size: 0.8rem; /* Kurangi ukuran font */
-        height: 40px; /* Atur tinggi tombol */
-        line-height: 16px; /* Sesuaikan line-height */
-    }
-    #volume-slider {
-        width: 60px; /* Kurangi lebar slider */
-    }
-    /* Dorong tombol info ke bawah agar tidak bertabrakan dengan slider/musik */
-    .fixed-top-right #about-btn, 
-    .fixed-top-right #info-btn {
-        margin-top: 45px; /* Dorong ke bawah, melewati baris pertama tombol */
-    }
-    
-    /* Perbaikan Padding Main Content */
-    #main-content > div {
-        padding: 24px; /* Kurangi padding dari p-10 menjadi p-6 (24px) */
-    }
+    #volume-slider { width: 60px; }
+    #main-content > div { padding: 24px; }
 }
-
-
-/* Sesuaikan posisi elemen fixed agar lebih ke tengah di desktop (16:9) */
 @media (min-width: 768px) {
-    .fixed-top-left {
-        left: 50%;
-        transform: translateX(calc(-50% - 130px)); 
+    .fixed-top-left { left: 50%; transform: translateX(calc(-50% - 250px)); } 
+    .fixed-header-right { 
+        right: 50%; transform: translateX(calc(50% + 250px)); 
+        flex-wrap: nowrap; gap: 16px; 
     }
-    .fixed-top-right {
-        right: 50%;
-        transform: translateX(calc(50% + 150px)); 
-        flex-wrap: nowrap; /* Nonaktifkan wrap di desktop */
-    }
-    /* Batalkan margin top di desktop */
-    .fixed-top-right #about-btn, 
-    .fixed-top-right #info-btn {
-        margin-top: 0;
-    }
-    #volume-slider {
-        width: 80px; /* Kembalikan lebar slider */
-    }
+    .fixed-header-right button:hover { transform:scale(1.05); box-shadow:0 0 15px currentColor,0 0 25px currentColor/70; }
+    #volume-slider { width: 80px; }
 }
 </style>
 </head>
@@ -197,24 +136,30 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
   <span id="player-count" class="text-base font-bold text-neon-magenta">| ⚡ 45/100</span> 
 </div>
 
-<header class="fixed-top-right flex items-center gap-3">
-  <button id="toggle-aspect-ratio-btn" class="p-3 border-2 border-neon-purple text-neon-purple font-bold rounded-full hover:bg-neon-purple/30 shadow-lg shadow-neon-purple/40" title="Ganti Rasio Layar">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-      <path id="aspect-ratio-icon" stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-    </svg>
-  </button>
-  <input type="range" id="volume-slider" min="0" max="100" value="40" class="w-24 h-2 bg-neon-cyan/50 rounded-lg appearance-none cursor-pointer">
-
-  <button id="music-toggle-btn" class="p-3 border-2 border-neon-cyan text-white font-bold rounded-full hover:bg-neon-cyan/30 shadow-lg shadow-neon-cyan/40">
-    <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+<header class="fixed-header-right">
+  <div class="func-group">
+    <button id="toggle-aspect-ratio-btn" class="func-button" title="Ganti Rasio Layar">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        <path id="aspect-ratio-icon" stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
       </svg>
-  </button>
-  <button id="about-btn" class="px-6 py-3 border-2 border-neon-magenta text-white font-bold rounded-xl hover:bg-neon-magenta/30 shadow-lg shadow-neon-magenta/40 uppercase">
-    1. Cara Join
-  </button>
-  <button id="info-btn" class="px-6 py-3 border-2 border-neon-cyan text-white font-bold rounded-xl hover:bg-neon-cyan/30 shadow-lg shadow-neon-cyan/40 uppercase">
-    2. Info Server
-  </button>
+    </button>
+    
+    <input type="range" id="volume-slider" min="0" max="100" value="40" class="w-24 h-2 bg-neon-cyan/50 rounded-lg appearance-none cursor-pointer">
+
+    <button id="music-toggle-btn" class="func-button">
+      <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+        </svg>
+    </button>
+  </div>
+
+  <div class="action-group">
+    <button id="about-btn" class="action-button">
+      1. Cara Join
+    </button>
+    <button id="info-btn" class="action-button">
+      2. Info Server
+    </button>
+  </div>
 </header>
 
 <div id="toast"></div>
@@ -237,6 +182,205 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
 <div id="info-overlay" class="overlay">
   <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative overflow-hidden">
     <button id="info-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
+    <div id="info-slider" class="flex transition-transform duration-500 w-[200%]">
+      <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
+        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">Versi Bahasa Indonesia 🇮🇩</h2>
+        <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
+        <p class="text-center">✨ Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru 🎮💥</p>
+      </div>
+      <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
+        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">English Version 🇺🇲</h2>
+        <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
+        <p class="text-center">✨ Dive Into a New Growtopia World! GTZS Private Server offers a unique & exciting experience 🎮💥</p>
+      </div>
+    </div>
+    <div class="flex justify-center gap-4 mt-6">
+      <button id="prev-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">◀</button>
+      <button id="next-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">▶</button>
+    </div>
+  </div>
+</div>
+
+<div id="more-overlay" class="overlay">
+  <div class="overlay-content max-w-sm w-[90%] p-6 bg-black/70 border border-neon-purple rounded-2xl shadow-2xl text-white relative">
+    <button id="more-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
+    <h2 class="text-xl font-bold text-neon-purple mb-4 text-center">⚙️ LAINNYA ⚙️</h2>
+    <p class="text-center text-soft-cyan">Saat ini belum ada informasi tambahan. Nantikan update dari tim GTZS!</p>
+    <div class="mt-4 text-center">
+        <a href="https://t.me/GTZS_PS" target="_blank" class="text-neon-cyan hover:underline">Gabung Telegram Channel</a>
+    </div>
+  </div>
+</div>
+
+<div id="layout-wrapper" class="layout-9-16">
+  <main id="main-content" class="main-content-anim relative z-20 flex items-center justify-center p-8 bg-cover bg-center" style="background-image:url('https://files.catbox.moe/2wqmke.jpeg');">
+    <div class="relative z-10 max-w-full w-full rounded-3xl p-10 bg-black/50 border border-neon-cyan/20 shadow-2xl backdrop-blur-md">
+
+      <div class="flex flex-col items-center mb-10">
+        <img src="https://files.catbox.moe/8qo5yx.jpg" alt="Server Icon Utama" class="w-24 h-24 rounded-full border-4 border-neon-cyan/80 object-cover shadow-2xl shadow-neon-cyan/40">
+        <h2 class="mt-4 font-orbitron text-3xl font-bold text-neon-cyan uppercase tracking-wider">GTZS PRIVATE SERVER</h2>
+        <p class="text-lg text-soft-cyan">Akses cepat ke semua sumber daya server.</p>
+      </div>
+
+      <section id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></section> 
+      
+      <hr class="mt-10 mb-6 border-neon-cyan/30"> 
+      
+      <footer class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div id="live-clock" class="font-orbitron text-xl text-neon-cyan p-3 border border-neon-cyan/50 rounded-lg bg-black/40 shadow-inner shadow-neon-cyan/10">00:00:00</div>
+        <div class="text-sm text-soft-cyan opacity-80 font-rajdhani">© <span id="current-year"></span> GTZS - PS | Licensi GTZS STAFF</div>
+      </footer>
+    </div>
+  </main>
+</div>
+<script>
+// Ikon SVG
+const MUSIC_ICON_ON = `<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.45 8.293a5.25 5.25 0 0 1 0 7.414M12 18.75V21m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+const MUSIC_ICON_OFF = `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.5-4.5m0 0 4.5 4.5m-4.5-4.5 4.5-4.5M12 21.75V24m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+const ASPECT_ICON_9_16 = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />`;
+const ASPECT_ICON_16_9 = `<path stroke-linecap="round" stroke-linejoin="round" d="M4 8.25V4.5M4.5 4.5h3.75M20 15.75v3.75M19.5 19.5h-3.75M4 15.75v3.75M4.5 19.5h3.75M20 8.25V4.5M19.5 4.5h-3.75" />`;
+
+// Variabel Rasio Aspek
+let is16_9 = false;
+const layoutWrapper = document.getElementById('layout-wrapper');
+const toggleBtn = document.getElementById('toggle-aspect-ratio-btn');
+const aspectRatioIcon = document.getElementById('aspect-ratio-icon');
+
+// =========================================================
+// tsParticles Configuration
+// =========================================================
+tsParticles.load({
+    id: "tsparticles-gtzps",
+    options: {
+        fullScreen: { enable: true, zIndex: 1 }, 
+        background: { color: { value: "transparent" } },
+        interactivity: {
+            events: {
+                onHover: { enable: true, mode: "grab" },
+                onClick: { enable: true, mode: "push" },
+            },
+            modes: {
+                grab: { distance: 150, links: { opacity: 0.2 } },
+                push: { quantity: 4 },
+            }
+        },
+        particles: {
+            number: { value: 60, density: { enable: true, value_area: 800 } },
+            color: { value: ["#00e6ff", "#ff00d4", "#9d00ff"] }, 
+            shape: { type: "circle" },
+            opacity: { value: 0.7, random: true, anim: { enable: false } },
+            size: { value: 3, random: true, anim: { enable: true, speed: 4, size_min: 0.3, sync: false } },
+            links: {
+                enable: true,
+                distance: 150,
+                color: "#8fe6ff", 
+                opacity: 0.15,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 1.5,
+                direction: "none",
+                random: true,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+            }
+        },
+        shadow: {
+            enable: true,
+            blur: 5,
+            color: "#00e6ff" 
+        }
+    }
+});
+// =========================================================
+
+// Fungsi untuk mengganti rasio aspek
+function toggleAspectRatio() {
+    if (is16_9) {
+        layoutWrapper.classList.remove('layout-16-9');
+        layoutWrapper.classList.add('layout-9-16');
+        aspectRatioIcon.innerHTML = ASPECT_ICON_9_16;
+        toggleBtn.title = "Ganti Rasio Layar ke 16:9";
+        showToast('Tampilan 9:16 (Mobile)');
+    } else {
+        layoutWrapper.classList.remove('layout-9-16');
+        layoutWrapper.classList.add('layout-16-9');
+        aspectRatioIcon.innerHTML = ASPECT_ICON_16_9;
+        toggleBtn.title = "Ganti Rasio Layar ke 9:16";
+        showToast('Tampilan 16:9 (Desktop)');
+    }
+    is16_9 = !is16_9;
+}
+
+// Event listener untuk tombol rasio
+toggleBtn.addEventListener('click', toggleAspectRatio);
+layoutWrapper.classList.add('layout-9-16');
+
+
+// ===== Clock & Footer =====
+function updateClock(){
+  const now = new Date();
+  document.getElementById('live-clock').textContent = now.toLocaleTimeString('id-ID');
+}
+setInterval(updateClock,1000);
+updateClock();
+document.getElementById('current-year').textContent = new Date().getFullYear();
+
+// ===== Overlay Handler =====
+function openOverlay(id){document.getElementById(id).classList.add('visible');}
+function closeOverlay(id){document.getElementById(id).classList.remove('visible');}
+
+// Penanganan Event Tombol Overlay
+document.getElementById("about-btn").addEventListener('click', ()=>openOverlay("about-overlay"));
+document.getElementById("about-close").addEventListener('click', ()=>closeOverlay("about-overlay"));
+document.getElementById("info-btn").addEventListener('click', ()=>openOverlay("info-overlay"));
+document.getElementById("info-close").addEventListener('click', ()=>closeOverlay("info-overlay"));
+document.getElementById("more-close").addEventListener('click', ()=>closeOverlay("more-overlay"));
+
+document.addEventListener('click', (event) => {
+    if (event.target.closest('.menu-item') && event.target.closest('.menu-item').dataset.isMore) {
+        openOverlay('more-overlay');
+    }
+});
+
+
+// ===== Info Slider =====
+const slider = document.getElementById("info-slider");
+let currentSlide=0;
+const totalSlides = slider.querySelectorAll(".info-slide").length;
+document.getElementById("prev-slide").onclick = ()=>{
+  if(currentSlide>0){currentSlide--; slider.style.transform=`translateX(-${currentSlide*50}%)`;}
+};
+document.getElementById("next-slide").onclick = ()=>{
+  if(currentSlide<totalSlides-1){currentSlide++; slider.style.transform=`translateX(-${currentSlide*50}%)`;}
+};
+
+// ===== Menu Data & Grid Generation (Ikon Dihapus dari Loop) =====
+const menuData = [
+  { title:"Lainnya", desc:"Info dan kontak tambahan", href:"#", icon:"https://files.catbox.moe/o8bf91.jpg", isMore:true }, 
+  { title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/8qo5yx.jpg" },
+  { title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/8qo5yx.jpg" },
+  { title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", icon:"https://files.catbox.moe/8qo5yx.jpg", isCopy:true },
+  { title:"Admin 1", desc:"Kontak admin utama", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/8qo5yx.jpg" },
+  { title:"Admin 2", desc:"Kontak admin cadangan", href:"https://wa.me/6285166991453", icon:"https://files.catbox.moe/8qo5yx.jpg" }
+];
+
+const menuGrid=document.getElementById("menu-grid");
+menuGrid.innerHTML = menuData.map((item,index)=>{
+  
+  // Konten hanya berisi judul dan deskripsi
+  const content = `<div class='flex flex-col items-center gap-3'>
+    <h3 class='text-xl font-bold text-neon-cyan'>${item.title}</h3>
+    <p class='text-base text-soft-cyan/90 text-center'>${item.desc}</p>
+  </div>`;
+  
+  if(item.isMore){
+    return `<div data-is-more="true" class='menu-item p-6 rounded-3xl border border-neon-purple/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s; border-color:var(--tw-colors-neon-purple);'>${content}</div>`;
+  }
+  else if(item.isCopy){
+    return `<div onclick="copyLink('${item.href}')" class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blurton id="info-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
     <div id="info-slider" class="flex transition-transform duration-500 w-[200%]">
       <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
         <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">Versi Bahasa Indonesia 🇮🇩</h2>
