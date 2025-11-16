@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTZS Private Server - Neon Cyberpunk</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+<style>
+/* ===== Animasi konten utama ===== */
+.main-content-anim {animation: fadeInScale 1.4s ease-out forwards, floaty 6s ease-in-out infinite; opacity:0;}
+@keyframes fadeInScale {0%{opacity:0;transform:scale(0.97);}100%{opacity:1;transform:scale(1);}}
+@keyframes floaty {0%{transform:translateY(0px);}50%{transform:translateY(-6px);}100%{transform:translateY(0px);}}
+
+/* ===== Particle container & neon trail ===== */
+#main-particles,#tsparticles-gtzps,#neon-trail{position:absolute;inset:0;z-index:0;pointer-events:none;}
+
+/* ===== Loading bar ===== */
+.loading-bar-container{width:200px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.loading-bar-fill{width:0%;height:100%;background:linear-gradient(90deg,#00e6ff,#ff00d4,#9d00ff,#00ff90);animation:fillBar 7s linear forwards;}
+@keyframes fillBar{0%{width:0%;}100%{width:100%;}}
+
+/* ===== Neon icon di loading ===== */
+.neon-icon img{width:80px;height:80px;object-fit:cover;border-radius:12px;border:2px solid #00e6ff;box-shadow:0 0 15px #00e6ff,0 0 25px #ff00d4,0 0 40px #9d00ff;}
+
+/* ===== About overlay font styling & neon lines ===== */
+#about-overlay .whitespace-pre-wrap{font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;line-height:1.6;color:#fff;}
+#about-overlay{transition:opacity 0.5s ease-in-out;}
+#about-overlay .line{font-weight:600; text-shadow:0 0 5px,0 0 10px,0 0 15px;}
+
+/* ===== Neon line colors ===== */
+.line1{color:#00e6ff; text-shadow:0 0 5px #00e6ff,0 0 10px #00e6ff,0 0 20px #00e6ff;}
+.line2{color:#ff00d4; text-shadow:0 0 5px #ff00d4,0 0 10px #ff00d4,0 0 20px #ff00d4;}
+.line3{color:#9d00ff; text-shadow:0 0 5px #9d00ff,0 0 10px #9d00ff,0 0 20px #9d00ff;}
+.line4{color:#00ff90; text-shadow:0 0 5px #00ff90,0 0 10px #00ff90,0 0 20px #00ff90;}
+.line5{color:#ff8c00; text-shadow:0 0 5px #ff8c00,0 0 10px #ff8c00,0 0 20px #ff8c00;}
+.line6{color:#00ffff; text-shadow:0 0 5px #00ffff,0 0 10px #00ffff,0 0 20px #00ffff;}
+
+/* ===== Menu items hover ===== */
+a.menu-item{transition:all 0.3s ease;}
+a.menu-item:hover{box-shadow:0 0 20px #00e6ff,0 0 40px #ff00d4,0 0 60px #9d00ff;transform:scale(1.05);}
+
+/* ===== Toast notification ===== */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#00e6ff;padding:10px 20px;border-radius:12px;border:1px solid #00e6ff;font-family:'Rajdhani',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.5s ease;z-index:60;}
+
+/* ===== Grid background ===== */
+#grid-bg{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),linear-gradient(90deg, rgba(255,0,212,0.05) 1px, transparent 1px);background-size:40px 40px;pointer-events:none;}
+
+/* ===== Neon trail canvas ===== */
+#neon-trail{z-index:0;}
+</style>
+</head>
+<body class="bg-black">
+
+<!-- ===== Grid & Neon Trail ===== -->
+<div id="grid-bg"></div>
+<canvas id="neon-trail"></canvas>
+<div id="tsparticles-gtzps"></div>
+
+<!-- ===== Background Music ===== -->
+<audio id="bg-music" loop>
+<source src="https://files.catbox.moe/e3zea4.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ===== Music Toggle Button ===== -->
+<div class="absolute top-6 left-6 z-30">
+<button id="music-toggle-btn" class="flex items-center gap-3 px-3 py-2 bg-black/40 backdrop-blur rounded-2xl border border-[#00e6ff] hover:scale-105 transition-transform duration-300">
+<img id="music-btn-img" src="https://files.catbox.moe/o8bf91.jpg" class="w-8 h-8 rounded-full object-cover">
+<span id="music-status" class="text-sm font-semibold tracking-wider text-white">Play Music</span>
+</button>
+</div>
+
+<!-- ===== Toast ===== -->
+<div id="toast"></div>
+
+<!-- ===== Loading Screen ===== -->
+<div id="loading-screen" class="fixed inset-0 z-40 flex flex-col items-center justify-center opacity-100">
+<div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-[#00000080] backdrop-blur-sm"></div>
+<div class="relative z-50 flex flex-col items-center gap-4 p-6 rounded-2xl border border-[#00e6ff] bg-black/60 shadow-2xl">
+<div class="neon-icon"><img src="https://files.catbox.moe/o8bf91.jpg"></div>
+<div class="loading-bar-container"><div class="loading-bar-fill"></div></div>
+<h2 class="text-center text-xl font-bold tracking-wider text-white" style="font-family:'Orbitron',sans-serif;">Loading Server...</h2>
+<p class="text-sm text-[#9fdcff]">Memuat aset neon & koneksi virtual...</p>
+</div>
+</div>
+
+<!-- ===== About Overlay Neon ===== -->
+<div id="about-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 opacity-0 hidden-fade">
+<div class="relative max-w-lg w-[90%] p-6 bg-black/70 border border-[#00e6ff] rounded-2xl shadow-2xl text-sm">
+<button id="about-close" class="absolute top-3 right-3 text-[#ff00d4] font-bold">✖</button>
+<div class="whitespace-pre-wrap">
+<div class="line line1">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</div>
+<div class="line line2">🌐 1️⃣ Buka menu Server</div>
+<div class="line line3">🏷️ 2️⃣ Masukkan nama server: GTZS</div>
+<div class="line line4">🧾 3️⃣ Tekan Register / Daftar</div>
+<div class="line line5">👤 4️⃣ Buat GrowID & Password</div>
+<div class="line line6">📧 5️⃣ Masukkan Email aktif</div>
+<div class="line line1">🎮 6️⃣ Selamat! Server siap dimainkan 🎉</div>
+</div>
+</div>
+</div>
+
+<!-- ===== Main Content ===== -->
+<main id="main-content" class="main-content-anim opacity-0 relative z-20 min-h-screen flex items-center justify-center p-8" 
+style="background-image:url('https://files.catbox.moe/2wqmke.jpeg'); background-size:cover; background-position:center;">
+<div id="main-particles" class="absolute inset-0 z-0"></div>
+
+<div class="relative z-10 max-w-5xl w-full rounded-3xl p-8 bg-black/50 border border-[#00e6ff]/20 shadow-2xl backdrop-blur-md">
+<header class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-4">
+<img src="https://files.catbox.moe/o8bf91.jpg" class="w-14 h-14 rounded-xl border border-[#00e6ff]/40">
+<h1 class="text-2xl font-extrabold text-white" style="font-family: 'Orbitron', sans-serif;">GTZS PRIVATE SERVER</h1>
+</div>
+<nav class="text-sm flex items-center gap-3 text-white">
+<button id="about-btn" class="px-3 py-2 rounded-lg border border-[#00e6ff]/20 hover:border-[#00e6ff]">About</button>
+</nav>
+</header>
+<section id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></section>
+<footer class="mt-8 text-sm text-[#8fe6ff] opacity-90 flex items-center justify-between">
+<div>© <span id="current-year"></span> GTZS PRIVATE SERVER</div>
+</footer>
+</div>
+</main>
+
+<script>
+// ===== Music =====
+const music=document.getElementById("bg-music");
+let isMusicPlaying=false;
+const musicBtnImg=document.getElementById("music-btn-img");
+document.getElementById("music-toggle-btn").onclick=function(){
+const text=document.getElementById("music-status");
+if(isMusicPlaying){music.pause();text.textContent="Play Music";musicBtnImg.style.borderColor="#00e6ff";}
+else{music.play();text.textContent="Stop Music";musicBtnImg.style.borderColor="#ff00d4";}
+isMusicPlaying=!isMusicPlaying;
+};
+
+// ===== Menu =====
+const menuData=[
+{ title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/t46g6s.jpg" },
+{ title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/rcxspu.tmp" },
+{ title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", icon:"https://files.catbox.moe/82j6ay.jpg", isCopy:true },
+{ title:"Admin 1", desc:"Kontak admin utama", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/6k8owo.jpg" },
+{ title:"Admin 2", desc:"Kontak admin cadangan", href:"https://wa.me/6285166991453", icon:"https://files.catbox.moe/6k8owo.jpg" }
+];
+const menuGrid=document.getElementById("menu-grid");
+const toast=document.getElementById("toast");
+menuGrid.innerHTML=menuData.map(item=>{
+let contentHTML=`<div class='flex items-start gap-4'>
+<img src='${item.icon}' class='w-12 h-12 rounded-xl border border-[#00e6ff]/30 object-cover'>
+<div><h3 class='text-lg font-semibold text-white'>${item.title}</h3>
+<p class='text-sm text-[#9fdcff]'>${item.desc}</p></div></div>`;
+if(item.isCopy){
+return `<a onclick="navigator.clipboard.writeText('${item.href}'); showToast('Link disalin!');" class='menu-item block p-5 rounded-2xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative'>`+contentHTML+`<div class='absolute right-4 top-4 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>Salin</div></a>`;
+}else{
+return `<a href='${item.href}' target='_blank' class='menu-item block p-5 rounded-2xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative'>`+contentHTML+`<div class='absolute right-4 top-4 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>Open</div></a>`;
+}
+}).join('');
+function showToast(msg){toast.textContent=msg;toast.style.opacity="1";setTimeout(()=>{toast.style.opacity="0";},1500);}
+
+// ===== Loading =====
+window.addEventListener("load",()=>{
+const loader=document.getElementById("loading-screen");
+const main=document.getElementById("main-content");
+loader.style.opacity="0";
+setTimeout(()=>loader.remove(),7000);
+setTimeout(()=>main.style.opacity="1",7000);
+});
+
+// ===== About =====
+const aboutBtn=document.getElementById("about-btn");
+const aboutOverlay=document.getElementById("about-overlay");
+const aboutClose=document.getElementById("about-close");
+aboutBtn.onclick=()=>{aboutOverlay.classList.remove("hidden-fade");aboutOverlay.style.opacity="1";}
+aboutClose.onclick=()=>{aboutOverlay.style.opacity="0";setTimeout(()=>aboutOverlay.classList.add("hidden-fade"),500);}
+
+// ===== Particles =====
+tsParticles.load({id:"tsparticles-gtzps", options:{background:{color:"transparent"},fpsLimit:60,particles:{number:{value:40,density:{enable:true,area:800}},color:{value:["#00e6ff","#ff00d4","#9d00ff","#00ff90"]},shape:{type:"circle"},opacity:{value:0.7},size:{value:{min:1,max:3}},move:{enable:true,speed:1},links:{enable:true,distance:120,color:"#00e6ff",opacity:0.12,width:1}},interactivity:{events:{onHover:{enable:true,mode:"repulse"},resize:true},modes:{repulse:{distance:100,duration:0.3}}}}});
+
+tsParticles.load({id:"main-particles",options:{fullScreen:false,fpsLimit:60,particles:{number:{value:50,density:{enable:true,area:700}},color:{value:["#00e6ff","#ff00d4","#9d00ff","#00ff90"]},shape:{type:"circle"},opacity:{value:{min:0.4,max:0.8}},size:{value:{min:1,max:3}},move:{enable:true,speed:0.8,outModes:{default:"out"}},links:{enable:true,distance:120,color:"#ff00d4",opacity:0.12,width:1}},interactivity:{events:{onHover:{enable:true,mode:"repulse"},resize:true},modes:{repulse:{distance:100,duration:0.3}}}}});
+
+// ===== Neon Trail =====
+const canvas=document.getElementById('neon-trail');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+let mouse={x:canvas.width/2,y:canvas.height/2};
+let trailParticles=[];
+for(let i=0;i<50;i++){trailParticles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,dx:0,dy:0,color:`hsl(${Math.random()*360},100%,50%)`});}
+document.addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+function animateNeonTrail(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+trailParticles.forEach(p=>{
+let ax=(mouse.x-p.x)*0.05;let ay=(mouse.y-p.y)*0.05;
+p.dx+=ax;p.dy+=ay;p.dx*=0.85;p.dy*=0.85;
+p.x+=p.dx;p.y+=p.dy;
+ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);
+ctx.fillStyle=p.color;ctx.shadowColor=p.color;ctx.shadowBlur=12;ctx.fill();
+});
+requestAnimationFrame(animateNeonTrail);}
+animateNeonTrail();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// ===== Current Year =====
+document.getElementById("current-year").textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
