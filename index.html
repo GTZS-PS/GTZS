@@ -197,6 +197,7 @@ a.menu-item:hover{box-shadow:0 0 20px #00e6ff,0 0 40px #ff00d4,0 0 60px #9d00ff;
 
     </div>
 </div>
+
 <div id="faq-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
     <div class="relative max-w-sm sm:max-w-md w-[90%] p-5 bg-black/70 border border-[#00ff90] rounded-xl shadow-2xl text-xs overflow-y-auto max-h-[90vh]">
         <button id="faq-close" class="absolute top-2 right-2 text-[#ff8c00] font-bold text-lg">✖</button>
@@ -208,6 +209,7 @@ a.menu-item:hover{box-shadow:0 0 20px #00e6ff,0 0 40px #ff00d4,0 0 60px #9d00ff;
 
     </div>
 </div>
+
 <main id="main-content" class="main-content-anim relative z-20 flex items-center justify-center p-2" 
 style="background-image:url('https://files.catbox.moe/2wqmke.jpeg'); background-size:cover; background-position:center;">
 <div id="main-particles" class="absolute inset-0 z-0"></div>
@@ -261,13 +263,10 @@ isMusicPlaying=!isMusicPlaying;
 const menuData=[
 // Menu 1: Server Rules & Policy 
 { title:"Server Rules & Policy", desc:"Peraturan Server, Sanksi & Kebijakan Anti-Cheat", href:"#", icon:"https://files.catbox.moe/rules.jpg", isRules:true }, 
-
 // Menu 2: Report Bug & Error (TERHUBUNG KE ADMIN 1)
 { title:"Report Bug & Error", desc:"Lapor masalah teknis & server error di sini", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/t4u5v6.jpg" },
-
 // Menu 3: FAQ (Tanya Jawab) (OVERLAY FAQ)
 { title:"FAQ (Tanya Jawab)", desc:"Lihat Pertanyaan Umum Seputar Server GTZS", href:"#", icon:"https://files.catbox.moe/w7x8y9.jpg", isFAQ:true },
-
 // Menu lama yang sudah ada (tetap):
 { title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/t46g6s.jpg" },
 { title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/rcxspu.tmp" },
@@ -344,6 +343,7 @@ document.getElementById('faq-content').innerHTML = faqContent;
 
 
 // ===== Menu Grid Render (Logika Pemicu Overlay/Copy) =====
+// **BAGIAN INI AKAN MEMUNCULKAN KOLOM-KOLOM MENU**
 menuGrid.innerHTML=menuData.map(item=>{
 let contentHTML=`<div class='flex items-start gap-3'>
 <img src='${item.icon}' class='w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#00e6ff]/30 object-cover'>
@@ -370,6 +370,15 @@ let contentHTML=`<div class='flex items-start gap-3'>
 
 function showToast(msg){toast.textContent=msg;toast.style.opacity="1";setTimeout(()=>{toast.style.opacity="0";},1500);}
 
+// ===== LIVE CLOCK (Fungsi yang hilang telah ditambahkan) =====
+function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('live-clock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+
 // ===== SERVER STATUS & PLAYER COUNT SIMULATION (Tetap Simulasi) =====
 function updateServerStatus() {
     const isOnline = Math.random() < 0.9; 
@@ -395,11 +404,5 @@ function updateServerStatus() {
     }
 }
 
-// ===== TAGLINE CYCLING =====
-const taglineElement = document.getElementById('server-tagline');
-let currentTaglineIndex = 0;
-const taglines = [
-    'GTZS-PS: ✨ FARMING MUDAH. DROP RATE TINGGI. <span class="text-[#ff00d4]">SERVER STABIL!</span>',
-    'SAATNYA BERAKSI! ⚔️ FITUR BARU & WORLD EXCLUSIVE HANYA DI <span class="text-[#ff00d4]">GTZS!</span>',
-    'PLAYERS ONLINE: BERTAMBAH TERUS! 🤝 AYO GABUNG KOMUNITAS <span class="text-[#ff00d4]">GTZS-PS!</span>',
-    'FREE VIP ACCESS! 🎁 UPDATE TERBARU DAN EVENT MENARIK. <span class="text-[#ff00d4]">COBA SEKARANG!</span>'
+// ===== TAGLINE CYCLING (Fungsi yang hilang telah ditambahkan) =====
+const taglineElement = document.getElementById('server-t
