@@ -3,381 +3,403 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GTZS Private Server - Neon Cyberpunk</title>
+<title>GTZS Private Server - Mobile Optimized & Clean</title>
 
-<meta name="description" content="GTZS Private Server - Rasakan dunia Growtopia yang unik dan seru. Komunitas, host virtual, dan admin support tersedia!">
-<meta property="og:title" content="GTZS Private Server | Neon Cyberpunk">
-<meta property="og:description" content="Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru.">
-<meta property="og:type" content="website">
-<meta property="og:image" content="https://files.catbox.moe/2wqmke.jpeg">
-<link rel="icon" type="image/png" href="https://files.catbox.moe/8qo5yx.jpg">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          'neon-cyan': '#00e6ff',
-          'neon-magenta': '#ff00d4',
-          'neon-purple': '#9d00ff',
-          'soft-cyan': '#8fe6ff',
-        },
-        fontFamily: {
-          'orbitron': ['Orbitron', 'sans-serif'],
-          'rajdhani': ['Rajdhani', 'sans-serif'],
-        }
-      }
-    }
-  }
-</script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
 
 <style>
-/* CSS Kustom dan Penyesuaian Responsivitas */
-body { margin:0; padding:0; font-family:'Rajdhani',sans-serif; background:black; overflow-x:hidden; }
-#grid-bg{position:absolute;inset:0;z-index:0;background-image:linear-gradient(rgba(0,230,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,0,212,0.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
-#tsparticles-gtzps {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1; /* Di bawah konten utama */
+/* ===== KONTEN UTAMA - DIBATASI UNTUK RUMUS 9:16 (MOBILE) ===== */
+#main-content {
+    min-height: 100vh;
 }
-.main-content-anim {animation: fadeInScale 1.2s ease-out forwards; opacity:0;}
-@keyframes fadeInScale {0%{opacity:0;transform:scale(0.97);}100%{opacity:1;transform:scale(1);}}
-.menu-item {transition: all 0.4s ease; cursor:pointer; animation: fadeUp 0.6s forwards; opacity:0; transform:translateY(0);}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
-.menu-item:hover{transform:scale(1.03);box-shadow:0 0 10px var(--tw-colors-neon-cyan),0 0 25px var(--tw-colors-neon-magenta);}
-.overlay {position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.9);opacity:0;transition:opacity 0.3s ease;}
-.overlay.visible{display:flex;opacity:1;}
-.overlay-content{transform:scale(0.98);transition:opacity 0.3s ease, transform 0.3s ease;}
-.overlay.visible .overlay-content{transform:scale(1);}
-#music-bar-fill{background:linear-gradient(90deg,var(--tw-colors-neon-cyan),var(--tw-colors-neon-magenta),var(--tw-colors-neon-purple));transition:width 0.2s linear;}
-#toast{background:rgba(0,0,0,0.8);color:var(--tw-colors-neon-cyan);border:1px solid var(--tw-colors-neon-cyan);transition:opacity 0.5s ease, transform 0.5s ease;position:fixed;bottom:8px;left:50%;transform:translateX(-50%);padding:12px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;z-index:60;}
-#live-clock{font-size:1.25rem;padding:0.75rem 1.25rem;}
-.music-playing-pulse { animation: musicPulse 1.5s infinite ease-in-out; }
-@keyframes musicPulse {
-  0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
-  50% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+#main-container {
+    max-width: 450px; 
+    height: auto; 
+    padding: 1rem; 
+    width: 95%; 
+    border-radius: 1rem;
 }
 
-/* Styling untuk Volume Slider */
-#volume-slider::-webkit-slider-thumb {-webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ff00d4; box-shadow: 0 0 5px #ff00d4; cursor: pointer;}
-#volume-slider::-moz-range-thumb {width: 12px; height: 12px; border-radius: 50%; background: #ff00d4; box-shadow: 0 0 5px #ff00d4; cursor: pointer; border: none;}
-
-/* Container Utama (Wrapper) */
-#layout-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; width: 100vw; }
-.layout-9-16 { width: min(500px, calc(100vh * 9 / 16)); max-width: 100%; }
-.layout-16-9 { width: min(1280px, 90vw); max-width: 100%; }
-#main-content { margin: 0 auto; transition: width 0.5s ease; min-height: 100vh; width: 100%; }
-
-/* Perbaikan untuk Posisi Fixed */
-.fixed-top-left { position: fixed !important; top: 6px; left: 6px; z-index: 30; }
-.fixed-header-right { 
-    position: fixed !important; top: 6px; right: 6px; z-index: 30;
-    display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; 
-    justify-content: flex-end; max-width: 95vw; 
+/* Mengatur ulang posisi musik dan jam agar rapi di sudut mobile */
+#music-toggle-container {
+    top: 0.5rem;
+    left: 0.5rem;
+    position: fixed; 
+    z-index: 50;
 }
-.func-group { display: flex; align-items: center; gap: 8px; order: 1; }
-.action-group { display: flex; align-items: center; gap: 8px; order: 2; margin-top: 0; }
-
-/* Styling Button Aksi */
-.action-button {
-    transition: all 0.3s ease; padding: 12px 24px; font-weight: bold; border-width: 2px;
-    border-radius: 12px; text-transform: uppercase; color: white; 
-    background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px);
+#live-clock {
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.9rem; 
+    position: fixed; 
 }
-#about-btn { border-color: #ff00d4; box-shadow: 0 0 10px rgba(255, 0, 212, 0.5); }
-#about-btn:hover { background: rgba(255, 0, 212, 0.2); }
-#info-btn { border-color: #00e6ff; box-shadow: 0 0 10px rgba(0, 230, 255, 0.5); }
-#info-btn:hover { background: rgba(0, 230, 255, 0.2); }
-/* Tombol Fungsional Bulat */
-.func-button {
-    transition: all 0.3s ease; padding: 12px; border-width: 2px;
-    border-radius: 9999px; color: white; background: rgba(0, 0, 0, 0.4); 
-    backdrop-filter: blur(5px);
+
+/* Mengatur ulang Header untuk tampilan vertikal di mobile */
+#main-header {
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 }
-#toggle-aspect-ratio-btn { border-color: #9d00ff; box-shadow: 0 0 8px rgba(157, 0, 255, 0.5); color: #9d00ff; }
-#toggle-aspect-ratio-btn:hover { background: rgba(157, 0, 255, 0.2); }
-#music-toggle-btn { border-color: #00e6ff; box-shadow: 0 0 8px rgba(0, 230, 255, 0.5); color: #00e6ff; }
-#music-toggle-btn:hover { background: rgba(0, 230, 255, 0.2); }
+
+/* Mengatur agar Server Status tidak terlalu menjorok */
+#server-status-container {
+    margin-left: 0 !important;
+    margin-top: 0.5rem;
+}
+
+/* Mengubah Menu Grid menjadi 1 kolom di mobile dan 2 di layar sedang */
+#menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 1rem; 
+}
 
 
-/* Media Queries */
-@media (max-width: 767px) {
-    #volume-slider { width: 60px; }
-    #main-content > div { padding: 24px; }
+/* ===== Animasi konten utama ===== */
+.main-content-anim {animation: floaty 6s ease-in-out infinite; opacity:1;}
+@keyframes floaty {0%{transform:translateY(0px);}50%{transform:translateY(-6px);}100%{transform:translateY(0px);}}
+
+/* ===== Particle container & neon trail ===== */
+#main-particles,#tsparticles-gtzps,#neon-trail{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ===== About, Rules, & FAQ overlay styling & transition fix ===== */
+#about-overlay .whitespace-pre-wrap, #rules-overlay .whitespace-pre-wrap, #faq-overlay .whitespace-pre-wrap{font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;line-height:1.6;color:#fff;}
+
+#about-overlay, #rules-overlay, #faq-overlay{transition:opacity 0.5s ease-in-out;}
+.hidden-fade {
+    opacity: 0 !important; 
+    pointer-events: none; 
 }
-@media (min-width: 768px) {
-    .fixed-top-left { left: 50%; transform: translateX(calc(-50% - 250px)); } 
-    .fixed-header-right { 
-        right: 50%; transform: translateX(calc(50% + 250px)); 
-        flex-wrap: nowrap; gap: 16px; 
+#about-overlay .line, #rules-overlay .line, #faq-overlay .line{font-weight:600; text-shadow:0 0 5px,0 0 10px,0 0 15px;}
+.line1{color:#00e6ff; text-shadow:0 0 5px #00e6ff,0 0 10px #00e6ff,0 0 20px #00e6ff;}
+.line2{color:#ff00d4; text-shadow:0 0 5px #ff00d4,0 0 10px #ff00d4,0 0 20px #ff00d4;}
+.line3{color:#9d00ff; text-shadow:0 0 5px #9d00ff,0 0 10px #9d00ff,0 0 20px #9d00ff;}
+.line4{color:#00ff90; text-shadow:0 0 5px #00ff90,0 0 10px #00ff90,0 0 20px #00ff90;}
+.line5{color:#ff8c00; text-shadow:0 0 5px #ff8c00,0 0 10px #ff8c00,0 0 20px #ff8c00;}
+.line6{color:#00ffff; text-shadow:0 0 5px #00ffff,0 0 10px #00ffff,0 0 20px #00ffff;}
+
+/* FAQ specific styling */
+.faq-q { color: #00e6ff; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+.faq-a { color: #ffffff; margin-bottom: 10px; }
+
+/* ===== Menu items hover ===== */
+a.menu-item{transition:all 0.3s ease;}
+a.menu-item:hover{box-shadow:0 0 20px #00e6ff,0 0 40px #ff00d4,0 0 60px #9d00ff;transform:scale(1.05);}
+
+/* ===== Toast notification ===== */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#00e6ff;padding:10px 20px;border-radius:12px;border:1px solid #00e6ff;font-family:'Rajdhani',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.5s ease;z-index:60;}
+
+/* ===== Grid background ===== */
+#grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),linear-gradient(90deg, rgba(255,0,212,0.05) 1px, transparent 1px);background-size:40px 40px;pointer-events:none;}
+
+
+/* ===== Server Tagline Styling ===== */
+#server-tagline {
+    color: #00e6ff;
+    text-shadow: 0 0 4px #00e6ff, 0 0 8px #00e6ff, 0 0 12px #00e6ff;
+    transition: opacity 0.5s ease-in-out; 
+    font-size: 0.75rem; 
+}
+#server-tagline span {
+    text-shadow: 0 0 4px #ff00d4, 0 0 8px #ff00d4, 0 0 12px #ff00d4;
+}
+.tagline-fade-out {
+    opacity: 0 !important;
+}
+
+/* ===== Server Status Indicator ===== */
+.status-indicator {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+}
+.status-online {
+    background-color: #00ff90; 
+    color: #00ff90;
+}
+.status-offline {
+    background-color: #ff00d4; 
+    color: #ff00d4;
+}
+.status-indicator-big { 
+    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+}
+
+/* Media Query untuk Layar Lebih Besar (Desktop/Tablet) */
+@media (min-width: 640px) {
+    #main-container {
+        border-radius: 2rem; 
+        min-height: 80vh; 
+        height: auto;
     }
-    .fixed-header-right button:hover { transform:scale(1.05); box-shadow:0 0 15px currentColor,0 0 25px currentColor/70; }
-    #volume-slider { width: 80px; }
+    #main-header {
+        flex-direction: row; 
+        align-items: center;
+        gap: 1rem;
+    }
+    #music-toggle-container {
+        top: 1.5rem;
+        left: 1.5rem;
+    }
+    #live-clock {
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 1.125rem;
+    }
+    #server-tagline {
+        font-size: 0.875rem; 
+    }
 }
 </style>
 </head>
-<body>
+<body class="bg-black">
 
 <div id="grid-bg"></div>
+<canvas id="neon-trail"></canvas>
 <div id="tsparticles-gtzps"></div>
 
-<audio id="bg-music" loop preload="auto">
-  <source src="https://files.catbox.moe/e3zea4.mp3" type="audio/mpeg">
+<audio id="bg-music" loop>
+<source src="https://files.catbox.moe/e3zea4.mp3" type="audio/mpeg">
 </audio>
 
-<div id="server-status" class="fixed-top-left flex items-center gap-2 p-3 rounded-xl bg-black/50 border-2 border-neon-cyan shadow-lg font-orbitron text-white">
-  <div id="status-light" class="w-4 h-4 rounded-full bg-neon-cyan shadow-md shadow-neon-cyan animate-pulse"></div>
-  <span id="status-text" class="text-base text-soft-cyan">SERVER ONLINE</span>
-  <span id="player-count" class="text-base font-bold text-neon-magenta">| ⚡ 45/100</span> 
+<div id="music-toggle-container" class="absolute z-30">
+<button id="music-toggle-btn" class="flex items-center gap-2 px-2 py-1 bg-black/40 backdrop-blur rounded-xl border border-[#00e6ff] hover:scale-105 transition-transform duration-300">
+<img id="music-btn-img" src="https://files.catbox.moe/o8bf91.jpg" class="w-6 h-6 rounded-full object-cover">
+<span id="music-status" class="text-xs font-semibold tracking-wider text-white">Play Music</span>
+</button>
 </div>
-
-<header class="fixed-header-right">
-  <div class="func-group">
-    <button id="toggle-aspect-ratio-btn" class="func-button" title="Ganti Rasio Layar">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-        <path id="aspect-ratio-icon" stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-      </svg>
-    </button>
-    
-    <input type="range" id="volume-slider" min="0" max="100" value="40" class="w-24 h-2 bg-neon-cyan/50 rounded-lg appearance-none cursor-pointer">
-
-    <button id="music-toggle-btn" class="func-button">
-      <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-        </svg>
-    </button>
-  </div>
-
-  <div class="action-group">
-    <button id="about-btn" class="action-button">
-      1. Cara Join
-    </button>
-    <button id="info-btn" class="action-button">
-      2. Info Server
-    </button>
-  </div>
-</header>
 
 <div id="toast"></div>
 
-<div id="about-overlay" class="overlay">
-  <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative">
-    <button id="about-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
-    <h2 class="text-xl font-bold text-neon-cyan mb-3 text-center">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</h2>
-    <div class="whitespace-pre-wrap leading-relaxed pl-4">
-      🌐 1️⃣ Buka menu Server<br>
-      🏷️ 2️⃣ Masukkan nama server: GTZS<br>
-      🧾 3️⃣ Tekan Register / Daftar<br>
-      👤 4️⃣ Buat GrowID & Password<br>
-      📧 5️⃣ Masukkan Email aktif<br>
-      🎮 6️⃣ Selamat! Server siap dimainkan 🎉
-    </div>
-  </div>
+<div id="about-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+<div class="relative max-w-sm w-[90%] p-5 bg-black/70 border border-[#00e6ff] rounded-xl shadow-2xl text-xs">
+<button id="about-close" class="absolute top-2 right-2 text-[#ff00d4] font-bold text-lg">✖</button>
+<div class="whitespace-pre-wrap">
+<div class="line line1 text-sm">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</div>
+<div class="line line2">🌐 1️⃣ Buka menu Server</div>
+<div class="line line3">🏷️ 2️⃣ Masukkan nama server: GTZS</div>
+<div class="line line4">🧾 3️⃣ Tekan Register / Daftar</div>
+<div class="line line5">👤 4️⃣ Buat GrowID & Password</div>
+<div class="line line6">📧 5️⃣ Masukkan Email aktif</div>
+<div class="line line1">🎮 6️⃣ Selamat! Server siap dimainkan 🎉</div>
+</div>
+</div>
 </div>
 
-<div id="info-overlay" class="overlay">
-  <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative overflow-hidden">
-    <button id="info-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
-    <div id="info-slider" class="flex transition-transform duration-500 w-[200%]">
-      <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
-        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">Versi Bahasa Indonesia 🇮🇩</h2>
-        <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
-        <p class="text-center">✨ Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru 🎮💥</p>
-      </div>
-      <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
-        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">English Version 🇺🇲</h2>
-        <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
-        <p class="text-center">✨ Dive Into a New Growtopia World! GTZS Private Server offers a unique & exciting experience 🎮💥</p>
-      </div>
+<div id="rules-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+    <div class="relative max-w-sm sm:max-w-md w-[90%] p-5 bg-black/70 border border-[#ff00d4] rounded-xl shadow-2xl text-xs overflow-y-auto max-h-[90vh]">
+        <button id="rules-close" class="absolute top-2 right-2 text-[#00e6ff] font-bold text-lg">✖</button>
+        
+        <h3 class="line line2 text-lg text-center mb-3" style="font-family: 'Orbitron', sans-serif;">🔒 SERVER RULES & POLICY</h3>
+        
+        <div class="whitespace-pre-wrap text-white text-sm" id="rules-content">
+            </div>
+
     </div>
-    <div class="flex justify-center gap-4 mt-6">
-      <button id="prev-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">◀</button>
-      <button id="next-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">▶</button>
-    </div>
-  </div>
 </div>
+<div id="faq-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+    <div class="relative max-w-sm sm:max-w-md w-[90%] p-5 bg-black/70 border border-[#00ff90] rounded-xl shadow-2xl text-xs overflow-y-auto max-h-[90vh]">
+        <button id="faq-close" class="absolute top-2 right-2 text-[#ff8c00] font-bold text-lg">✖</button>
+        
+        <h3 class="line line4 text-lg text-center mb-3" style="font-family: 'Orbitron', sans-serif;">❓ FAQ (TANYA JAWAB GTZS)</h3>
+        
+        <div class="whitespace-pre-wrap text-white text-sm" id="faq-content">
+            </div>
 
-<div id="more-overlay" class="overlay">
-  <div class="overlay-content max-w-sm w-[90%] p-6 bg-black/70 border border-neon-purple rounded-2xl shadow-2xl text-white relative">
-    <button id="more-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
-    <h2 class="text-xl font-bold text-neon-purple mb-4 text-center">⚙️ LAINNYA ⚙️</h2>
-    <p class="text-center text-soft-cyan">Saat ini belum ada informasi tambahan. Nantikan update dari tim GTZS!</p>
-    <div class="mt-4 text-center">
-        <a href="https://t.me/GTZS_PS" target="_blank" class="text-neon-cyan hover:underline">Gabung Telegram Channel</a>
     </div>
-  </div>
 </div>
+<main id="main-content" class="main-content-anim relative z-20 flex items-center justify-center p-2" 
+style="background-image:url('https://files.catbox.moe/2wqmke.jpeg'); background-size:cover; background-position:center;">
+<div id="main-particles" class="absolute inset-0 z-0"></div>
 
-<div id="layout-wrapper" class="layout-9-16">
-  <main id="main-content" class="main-content-anim relative z-20 flex items-center justify-center p-8 bg-cover bg-center" style="background-image:url('https://files.catbox.moe/2wqmke.jpeg');">
-    <div class="relative z-10 max-w-full w-full rounded-3xl p-10 bg-black/50 border border-neon-cyan/20 shadow-2xl backdrop-blur-md">
-
-      <div class="flex flex-col items-center mb-10">
-        <img src="https://files.catbox.moe/8qo5yx.jpg" alt="Server Icon Utama" class="w-24 h-24 rounded-full border-4 border-neon-cyan/80 object-cover shadow-2xl shadow-neon-cyan/40">
-        <h2 class="mt-4 font-orbitron text-3xl font-bold text-neon-cyan uppercase tracking-wider">GTZS PRIVATE SERVER</h2>
-        <p class="text-lg text-soft-cyan">Akses cepat ke semua sumber daya server.</p>
-      </div>
-
-      <section id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></section> 
-      
-      <hr class="mt-10 mb-6 border-neon-cyan/30"> 
-      
-      <footer class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div id="live-clock" class="font-orbitron text-xl text-neon-cyan p-3 border border-neon-cyan/50 rounded-lg bg-black/40 shadow-inner shadow-neon-cyan/10">00:00:00</div>
-        <div class="text-sm text-soft-cyan opacity-80 font-rajdhani">© <span id="current-year"></span> GTZS - PS | Licensi GTZS STAFF</div>
-      </footer>
+<div id="main-container" class="relative z-10 w-full bg-black/50 border border-[#00e6ff]/20 shadow-2xl backdrop-blur-md">
+<header id="main-header" class="flex items-center justify-between p-2 sm:p-4">
+<div class="flex items-start gap-3 w-full"> 
+    <img src="https://files.catbox.moe/o8bf91.jpg" class="w-10 h-10 rounded-lg border border-[#00e6ff]/40">
+    <div class="flex flex-col items-start w-full"> 
+        <h1 class="text-xl sm:text-2xl font-extrabold text-white" style="font-family: 'Orbitron', sans-serif;">GTZS PRIVATE SERVER</h1>
+        <h2 id="server-tagline" class="text-xs sm:text-sm font-semibold tracking-wider uppercase mt-1 tagline-fade-out" style="font-family: 'Rajdhani', sans-serif;">
+            &nbsp;
+        </h2>
     </div>
-  </main>
 </div>
+    
+<div class="flex flex-row items-center justify-between w-full mt-2">
+    <div id="server-status-container" class="flex flex-row items-center gap-3 font-semibold text-xs tracking-widest" style="font-family: 'Rajdhani', sans-serif;">
+        <div id="player-count" class="text-white">PLAYERS: <span class="text-[#00ff90] text-sm font-bold">LOADING...</span></div>
+        <div id="server-status" class="text-white">STATUS: <span class="status-indicator rounded-full w-2 h-2 inline-block mr-1"></span> <span class="text-[#00ff90] font-bold">LOADING...</span></div>
+    </div>
+    <nav class="text-sm flex items-center gap-3 text-white">
+        <button id="about-btn" class="text-xs px-2 py-1 rounded-lg border border-[#00e6ff]/20 hover:border-[#00e6ff]">About</button>
+    </nav>
+</div>
+</header>
+
+<section id="menu-grid" class="p-4 grid gap-3"></section>
+
+<div id="live-clock">00:00:00</div>
+
+<footer class="mt-2 text-xs text-[#8fe6ff] opacity-90 flex items-center justify-center p-2">
+<div>© <span id="current-year"></span> GTZS - PS | Licensi GTZS STAFF</div>
+</footer>
+</div>
+</main>
+
 <script>
-// Ikon SVG
-const MUSIC_ICON_ON = `<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.45 8.293a5.25 5.25 0 0 1 0 7.414M12 18.75V21m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
-const MUSIC_ICON_OFF = `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.5-4.5m0 0 4.5 4.5m-4.5-4.5 4.5-4.5M12 21.75V24m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
-const ASPECT_ICON_9_16 = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />`;
-const ASPECT_ICON_16_9 = `<path stroke-linecap="round" stroke-linejoin="round" d="M4 8.25V4.5M4.5 4.5h3.75M20 15.75v3.75M19.5 19.5h-3.75M4 15.75v3.75M4.5 19.5h3.75M20 8.25V4.5M19.5 4.5h-3.75" />`;
-
-// Variabel Rasio Aspek
-let is16_9 = false;
-const layoutWrapper = document.getElementById('layout-wrapper');
-const toggleBtn = document.getElementById('toggle-aspect-ratio-btn');
-const aspectRatioIcon = document.getElementById('aspect-ratio-icon');
-
-// =========================================================
-// tsParticles Configuration
-// =========================================================
-tsParticles.load({
-    id: "tsparticles-gtzps",
-    options: {
-        fullScreen: { enable: true, zIndex: 1 }, 
-        background: { color: { value: "transparent" } },
-        interactivity: {
-            events: {
-                onHover: { enable: true, mode: "grab" },
-                onClick: { enable: true, mode: "push" },
-            },
-            modes: {
-                grab: { distance: 150, links: { opacity: 0.2 } },
-                push: { quantity: 4 },
-            }
-        },
-        particles: {
-            number: { value: 60, density: { enable: true, value_area: 800 } },
-            color: { value: ["#00e6ff", "#ff00d4", "#9d00ff"] }, 
-            shape: { type: "circle" },
-            opacity: { value: 0.7, random: true, anim: { enable: false } },
-            size: { value: 3, random: true, anim: { enable: true, speed: 4, size_min: 0.3, sync: false } },
-            links: {
-                enable: true,
-                distance: 150,
-                color: "#8fe6ff", 
-                opacity: 0.15,
-                width: 1
-            },
-            move: {
-                enable: true,
-                speed: 1.5,
-                direction: "none",
-                random: true,
-                straight: false,
-                out_mode: "out",
-                bounce: false,
-            }
-        },
-        shadow: {
-            enable: true,
-            blur: 5,
-            color: "#00e6ff" 
-        }
-    }
-});
-// =========================================================
-
-// Fungsi untuk mengganti rasio aspek
-function toggleAspectRatio() {
-    if (is16_9) {
-        layoutWrapper.classList.remove('layout-16-9');
-        layoutWrapper.classList.add('layout-9-16');
-        aspectRatioIcon.innerHTML = ASPECT_ICON_9_16;
-        toggleBtn.title = "Ganti Rasio Layar ke 16:9";
-        showToast('Tampilan 9:16 (Mobile)');
-    } else {
-        layoutWrapper.classList.remove('layout-9-16');
-        layoutWrapper.classList.add('layout-16-9');
-        aspectRatioIcon.innerHTML = ASPECT_ICON_16_9;
-        toggleBtn.title = "Ganti Rasio Layar ke 9:16";
-        showToast('Tampilan 16:9 (Desktop)');
-    }
-    is16_9 = !is16_9;
-}
-
-// Event listener untuk tombol rasio
-toggleBtn.addEventListener('click', toggleAspectRatio);
-layoutWrapper.classList.add('layout-9-16');
-
-
-// ===== Clock & Footer =====
-function updateClock(){
-  const now = new Date();
-  document.getElementById('live-clock').textContent = now.toLocaleTimeString('id-ID');
-}
-setInterval(updateClock,1000);
-updateClock();
-document.getElementById('current-year').textContent = new Date().getFullYear();
-
-// ===== Overlay Handler =====
-function openOverlay(id){document.getElementById(id).classList.add('visible');}
-function closeOverlay(id){document.getElementById(id).classList.remove('visible');}
-
-// Penanganan Event Tombol Overlay
-document.getElementById("about-btn").addEventListener('click', ()=>openOverlay("about-overlay"));
-document.getElementById("about-close").addEventListener('click', ()=>closeOverlay("about-overlay"));
-document.getElementById("info-btn").addEventListener('click', ()=>openOverlay("info-overlay"));
-document.getElementById("info-close").addEventListener('click', ()=>closeOverlay("info-overlay"));
-document.getElementById("more-close").addEventListener('click', ()=>closeOverlay("more-overlay"));
-
-document.addEventListener('click', (event) => {
-    if (event.target.closest('.menu-item') && event.target.closest('.menu-item').dataset.isMore) {
-        openOverlay('more-overlay');
-    }
-});
-
-
-// ===== Info Slider =====
-const slider = document.getElementById("info-slider");
-let currentSlide=0;
-const totalSlides = slider.querySelectorAll(".info-slide").length;
-document.getElementById("prev-slide").onclick = ()=>{
-  if(currentSlide>0){currentSlide--; slider.style.transform=`translateX(-${currentSlide*50}%)`;}
-};
-document.getElementById("next-slide").onclick = ()=>{
-  if(currentSlide<totalSlides-1){currentSlide++; slider.style.transform=`translateX(-${currentSlide*50}%)`;}
+// ===== Music Toggle =====
+const music=document.getElementById("bg-music");
+let isMusicPlaying=false;
+const musicBtnImg=document.getElementById("music-btn-img");
+document.getElementById("music-toggle-btn").onclick=function(){
+const text=document.getElementById("music-status");
+if(isMusicPlaying){music.pause();text.textContent="Play Music";musicBtnImg.style.borderColor="#00e6ff";}
+else{music.play();text.textContent="Stop Music";musicBtnImg.style.borderColor="#ff00d4";}
+isMusicPlaying=!isMusicPlaying;
 };
 
-// ===== Menu Data & Grid Generation (Ikon Dihapus dari Loop) =====
-const menuData = [
-  { title:"Lainnya", desc:"Info dan kontak tambahan", href:"#", icon:"https://files.catbox.moe/o8bf91.jpg", isMore:true }, 
-  { title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/8qo5yx.jpg" },
-  { title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/8qo5yx.jpg" },
-  { title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", icon:"https://files.catbox.moe/8qo5yx.jpg", isCopy:true },
-  { title:"Admin 1", desc:"Kontak admin utama", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/8qo5yx.jpg" },
-  { title:"Admin 2", desc:"Kontak admin cadangan", href:"https://wa.me/6285166991453", icon:"https://files.catbox.moe/8qo5yx.jpg" }
+// ===== Menu Items & Toast (MENU LENGKAP) =====
+const menuData=[
+// Menu 1: Server Rules & Policy 
+{ title:"Server Rules & Policy", desc:"Peraturan Server, Sanksi & Kebijakan Anti-Cheat", href:"#", icon:"https://files.catbox.moe/rules.jpg", isRules:true }, 
+
+// Menu 2: Report Bug & Error (TERHUBUNG KE ADMIN 1)
+{ title:"Report Bug & Error", desc:"Lapor masalah teknis & server error di sini", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/t4u5v6.jpg" },
+
+// Menu 3: FAQ (Tanya Jawab) (OVERLAY FAQ)
+{ title:"FAQ (Tanya Jawab)", desc:"Lihat Pertanyaan Umum Seputar Server GTZS", href:"#", icon:"https://files.catbox.moe/w7x8y9.jpg", isFAQ:true },
+
+// Menu lama yang sudah ada (tetap):
+{ title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/t46g6s.jpg" },
+{ title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/rcxspu.tmp" },
+{ title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", isCopy:true, icon:"https://files.catbox.moe/82j6ay.jpg" },
+{ title:"Admin 1", desc:"Kontak admin utama", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/6k8owo.jpg" }, 
+{ title:"Admin 2", desc:"Kontak admin cadangan", href:"https://wa.me/6285166991453", icon:"https://files.catbox.moe/6k8owo.jpg" }
 ];
 
 const menuGrid=document.getElementById("menu-grid");
-menuGrid.innerHTML = menuData.map((item,index)=>{
-  
-  // Konten hanya berisi judul dan deskripsi
-  const content = `<div class='flex flex-col items-center gap-3'>
-    <h3 class='text-xl font-bold text-neon-cyan'>${item.title}</h3>
-    <p class='text-base text-soft-cyan/90 text-center'>${item.desc}</p>
-  </div>`;
-  
-  if(item.isMore){
-    return `<div data-is-more="true" class='menu-item p-6 rounded-3xl border border-neon-purple/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s; border-color:var(--tw-colors-neon-purple);'>${content}</div>`;
-  }
-  else if(item.isCopy){
-    return `<div onclick="copyLink('${item.href}')" class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blur
+const toast=document.getElementById("toast");
+
+
+// ===== KONTEN PERATURAN SERVER (RULES OVERLAY) =====
+const serverRulesContent = `
+=========================================
+      1. KETENTUAN DASAR & ACCOUNT
+=========================================
+1.1. Kepemilikan Akun: Tanggung jawab penuh atas keamanan GrowID dan password ada pada pemain. Staff tidak bertanggung jawab atas kehilangan akun akibat kelalaian (phishing, sharing).
+
+1.2. Email Terdaftar: Gunakan email aktif. Kehilangan akses atau kesalahan email adalah risiko pemain.
+
+1.3. Larangan Trading Real World Items (RWT): Dilarang keras melakukan transaksi item di server ini menggunakan uang asli (Rupiah/mata uang lain).
+Sanksi: BAN PERMANEN tanpa pengecualian.
+
+=========================================
+      2. CHEATING & EXPLOITASI BUG
+=========================================
+2.1. Program Ilegal (Cheating): Penggunaan program pihak ketiga (seperti auto-clicker/bot yang dilarang, speed hack, fly hack, dll.) DILARANG KERAS.
+Sanksi: BAN PERMANEN.
+
+2.2. Exploitasi Bug: Menemukan bug (kesalahan sistem)? Laporkan segera ke Staff/Report Bug Menu. Mencoba atau menyebarkan cara exploitasi bug untuk keuntungan pribadi akan dikenakan sanksi.
+Sanksi: BAN SEMENTARA hingga PERMANEN (tergantung tingkat kerugian server).
+
+=========================================
+      3. ETIKA KOMUNITAS (CHAT)
+=========================================
+3.1. Spam & Flood: Dilarang melakukan spam chat, mengirim pesan berulang-ulang, atau promosi server lain.
+Sanksi: MUTE/BAN SEMENTARA.
+
+3.2. Ucapan Kotor/SARA: Dilarang menggunakan bahasa kotor, diskriminasi (SARA), atau tindakan yang menyerang privasi/ras/agama pemain lain.
+Sanksi: MUTE/BAN SEMENTARA hingga PERMANEN.
+
+=========================================
+    4. KEBIJAKAN DONASI (JIKA ADA)
+=========================================
+4.1. Refund: Semua donasi yang masuk adalah final dan tidak dapat di-refund/ditarik kembali dengan alasan apapun. Donasi murni untuk pengembangan server.
+
+4.2. Ban Akun: Jika akun yang berdonasi terkena BAN karena melanggar aturan (Cheating/RWT), donasi yang telah diberikan TIDAK dapat dikembalikan.
+`;
+document.getElementById('rules-content').textContent = serverRulesContent;
+
+
+// ===== KONTEN FAQ (FAQ OVERLAY) =====
+const faqContent = `
+<div class="faq-q">Q: Apa itu GTZS Private Server?</div>
+<div class="faq-a">A: GTZS adalah server Growtopia Private (PS) yang menawarkan fitur dan pengalaman bermain unik dengan rate farming yang ditingkatkan, item eksklusif, dan event komunitas reguler.</div>
+
+<div class="faq-q">Q: Apakah server ini gratis untuk dimainkan?</div>
+<div class="faq-a">A: Ya, GTZS 100% gratis untuk dimainkan. Kami mendukung pengembangan server melalui donasi opsional (lihat Server Rules, bagian 4).</div>
+
+<div class="faq-q">Q: Bagaimana cara terhubung ke server ini?</div>
+<div class="faq-a">A: Buka klien Growtopia, pilih menu Server, dan masukkan nama server **GTZS**. Pastikan Anda sudah mendaftar GrowID dan memasukkan email aktif.</div>
+
+<div class="faq-q">Q: Item-item saya hilang setelah update/restart server. Kenapa?</div>
+<div class="faq-a">A: Kehilangan item sangat jarang terjadi. Pastikan Anda tidak melakukan *RWT* atau *sharing* akun. Jika yakin ini adalah *bug*, segera laporkan melalui menu **Report Bug & Error**.</div>
+
+<div class="faq-q">Q: Mengapa saya di-BAN?</div>
+<div class="faq-a">A: Cek kembali **Server Rules & Policy**. BAN biasanya dikenakan karena *cheating*, *exploiting*, atau *RWT*. Jika Anda merasa di-BAN tanpa alasan, hubungi admin melalui WhatsApp untuk banding.</div>
+
+<div class="faq-q">Q: Di mana saya bisa mendapatkan informasi update terbaru?</div>
+<div class="faq-a">A: Semua pengumuman penting, event, dan update server diumumkan secara resmi di **WhatsApp Community** dan in-game message.</div>
+`;
+document.getElementById('faq-content').innerHTML = faqContent; 
+
+
+// ===== Menu Grid Render (Logika Pemicu Overlay/Copy) =====
+menuGrid.innerHTML=menuData.map(item=>{
+let contentHTML=`<div class='flex items-start gap-3'>
+<img src='${item.icon}' class='w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#00e6ff]/30 object-cover'>
+<div><h3 class='text-base sm:text-lg font-semibold text-white'>${item.title}</h3>
+<p class='text-xs sm:text-sm text-[#9fdcff]'>${item.desc}</p></div></div>`;
+    
+    // LOGIKA UNTUK SERVER RULES
+    if(item.isRules){
+        return `<a id="rules-btn" class='menu-item block p-4 sm:p-5 rounded-xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative cursor-pointer'>`+contentHTML+`<div class='absolute right-3 top-3 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>View</div></a>`;
+    } 
+    // LOGIKA UNTUK FAQ
+    else if(item.isFAQ){
+        return `<a id="faq-btn" class='menu-item block p-4 sm:p-5 rounded-xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative cursor-pointer'>`+contentHTML+`<div class='absolute right-3 top-3 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>View</div></a>`;
+    } 
+    // LOGIKA COPY LINK
+    else if(item.isCopy){
+        return `<a onclick="navigator.clipboard.writeText('${item.href}'); showToast('Link disalin!');" class='menu-item block p-4 sm:p-5 rounded-xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative cursor-pointer'>`+contentHTML+`<div class='absolute right-3 top-3 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>Salin</div></a>`;
+    } 
+    // LOGIKA OPEN LINK (Termasuk Report Bug ke WA)
+    else{
+        return `<a href='${item.href}' target='_blank' class='menu-item block p-4 sm:p-5 rounded-xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative'>`+contentHTML+`<div class='absolute right-3 top-3 text-xs px-2 py-1 rounded-lg bg-black/50 border border-[#00e6ff]/10 text-white'>Open</div></a>`;
+    }
+}).join('');
+
+function showToast(msg){toast.textContent=msg;toast.style.opacity="1";setTimeout(()=>{toast.style.opacity="0";},1500);}
+
+// ===== SERVER STATUS & PLAYER COUNT SIMULATION (Tetap Simulasi) =====
+function updateServerStatus() {
+    const isOnline = Math.random() < 0.9; 
+    const playerCountElement = document.querySelector('#player-count span');
+    const statusElement = document.querySelector('#server-status .status-indicator');
+    const statusTextElement = document.querySelector('#server-status span:last-child');
+
+    if (isOnline) {
+        const players = Math.floor(Math.random() * (500 - 150 + 1)) + 150; 
+        playerCountElement.textContent = players.toLocaleString();
+        playerCountElement.className = 'text-[#00ff90] text-sm font-bold status-indicator-big';
+        
+        statusElement.className = 'status-indicator rounded-full w-2 h-2 inline-block mr-1 status-online';
+        statusTextElement.textContent = 'ONLINE';
+        statusTextElement.className = 'text-[#00ff90] font-bold';
+    } else {
+        playerCountElement.textContent = '0';
+        playerCountElement.className = 'text-[#ff00d4] text-sm font-bold status-indicator-big';
+        
+        statusElement.className = 'status-indicator rounded-full w-2 h-2 inline-block mr-1 status-offline';
+        statusTextElement.textContent = 'OFFLINE';
+        statusTextElement.className = 'text-[#ff00d4] font-bold';
+    }
+}
+
+// ===== TAGLINE CYCLING =====
+const taglineElement = document.getElementById('server-tagline');
+let currentTaglineIndex = 0;
+const taglines = [
+    'GTZS-PS: ✨ FARMING MUDAH. DROP RATE TINGGI. <span class="text-[#ff00d4]">SERVER STABIL!</span>',
+    'SAATNYA BERAKSI! ⚔️ FITUR BARU & WORLD EXCLUSIVE HANYA DI <span class="text-[#ff00d4]">GTZS!</span>',
+    'PLAYERS ONLINE: BERTAMBAH TERUS! 🤝 AYO GABUNG KOMUNITAS <span class="text-[#ff00d4]">GTZS-PS!</span>',
+    'FREE VIP ACCESS! 🎁 UPDATE TERBARU DAN EVENT MENARIK. <span class="text-[#ff00d4]">COBA SEKARANG!</span>'
