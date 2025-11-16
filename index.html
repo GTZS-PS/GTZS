@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GTZS Private Server - Neon Cyberpunk</title>
 
+<meta name="description" content="GTZS Private Server - Rasakan dunia Growtopia yang unik dan seru. Komunitas, host virtual, dan admin support tersedia!">
+<meta property="og:title" content="GTZS Private Server | Neon Cyberpunk">
+<meta property="og:description" content="Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://files.catbox.moe/2wqmke.jpeg">
+<link rel="icon" type="image/png" href="https://files.catbox.moe/8qo5yx.jpg">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -44,6 +50,34 @@ body { margin:0; padding:0; font-family:'Rajdhani',sans-serif; background:black;
 header button{transition:all 0.3s ease;}
 header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 25px currentColor/70;}
 #live-clock{font-size:1.25rem;padding:0.75rem 1.25rem;}
+.music-playing-pulse {
+  animation: musicPulse 1.5s infinite ease-in-out;
+}
+@keyframes musicPulse {
+  0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+  50% { box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+}
+
+/* Styling untuk Volume Slider */
+#volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px; 
+  height: 12px;
+  border-radius: 50%; 
+  background: #ff00d4; /* Neon Magenta */
+  box-shadow: 0 0 5px #ff00d4;
+  cursor: pointer;
+}
+#volume-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff00d4;
+  box-shadow: 0 0 5px #ff00d4;
+  cursor: pointer;
+  border: none;
+}
 </style>
 </head>
 <body>
@@ -55,21 +89,30 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
   <source src="https://files.catbox.moe/e3zea4.mp3" type="audio/mpeg">
 </audio>
 
+<div id="server-status" class="absolute top-6 left-6 z-30 flex items-center gap-2 p-3 rounded-xl bg-black/50 border-2 border-neon-cyan shadow-lg font-orbitron text-white">
+  <div id="status-light" class="w-4 h-4 rounded-full bg-neon-cyan shadow-md shadow-neon-cyan animate-pulse"></div>
+  <span id="status-text" class="text-base text-soft-cyan">SERVER ONLINE</span>
+  <span id="player-count" class="text-base font-bold text-neon-magenta">| ⚡ 45/100</span> 
+</div>
+
 <header class="absolute top-6 right-6 z-30 flex items-center gap-3">
+  <input type="range" id="volume-slider" min="0" max="100" value="40" class="w-24 h-2 bg-neon-cyan/50 rounded-lg appearance-none cursor-pointer">
+
+  <button id="music-toggle-btn" class="p-3 border-2 border-neon-cyan text-white font-bold rounded-full hover:bg-neon-cyan/30 shadow-lg shadow-neon-cyan/40">
+    <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.45 8.293a5.25 5.25 0 0 1 0 7.414M12 18.75V21m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+  </button>
   <button id="about-btn" class="px-6 py-3 border-2 border-neon-magenta text-white font-bold rounded-xl hover:bg-neon-magenta/30 shadow-lg shadow-neon-magenta/40 uppercase">
     1. Cara Join
   </button>
   <button id="info-btn" class="px-6 py-3 border-2 border-neon-cyan text-white font-bold rounded-xl hover:bg-neon-cyan/30 shadow-lg shadow-neon-cyan/40 uppercase">
     2. Info Server
   </button>
-  <button class="px-6 py-3 border-2 border-neon-purple text-white font-bold rounded-xl hover:bg-neon-purple/30 shadow-lg shadow-neon-purple/40 uppercase">
-    3. Lainnya
-  </button>
 </header>
 
 <div id="toast"></div>
 
-<!-- ===== About Overlay ===== -->
 <div id="about-overlay" class="overlay">
   <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative">
     <button id="about-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
@@ -85,7 +128,6 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
   </div>
 </div>
 
-<!-- ===== Info Overlay ===== -->
 <div id="info-overlay" class="overlay">
   <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative overflow-hidden">
     <button id="info-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
@@ -108,6 +150,17 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
   </div>
 </div>
 
+<div id="more-overlay" class="overlay">
+  <div class="overlay-content max-w-sm w-[90%] p-6 bg-black/70 border border-neon-purple rounded-2xl shadow-2xl text-white relative">
+    <button id="more-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
+    <h2 class="text-xl font-bold text-neon-purple mb-4 text-center">⚙️ LAINNYA ⚙️</h2>
+    <p class="text-center text-soft-cyan">Saat ini belum ada informasi tambahan. Nantikan update dari tim GTZS!</p>
+    <div class="mt-4 text-center">
+        <a href="https://t.me/GTZS_PS" target="_blank" class="text-neon-cyan hover:underline">Gabung Telegram Channel</a>
+    </div>
+  </div>
+</div>
+
 <main id="main-content" class="main-content-anim relative z-20 min-h-screen flex items-center justify-center p-8 bg-cover bg-center" style="background-image:url('https://files.catbox.moe/2wqmke.jpeg');">
   <div class="relative z-10 max-w-6xl w-full rounded-3xl p-10 bg-black/50 border border-neon-cyan/20 shadow-2xl backdrop-blur-md">
 
@@ -123,7 +176,7 @@ header button:hover{transform:scale(1.05);box-shadow:0 0 15px currentColor,0 0 2
 </main>
 
 <script>
-// ===== Clock =====
+// ===== Clock (Existing) =====
 function updateClock(){
   const now = new Date();
   document.getElementById('live-clock').textContent = now.toLocaleTimeString('id-ID');
@@ -132,15 +185,17 @@ setInterval(updateClock,1000);
 updateClock();
 document.getElementById('current-year').textContent = new Date().getFullYear();
 
-// ===== Overlay Handler =====
+// ===== Overlay Handler (Existing) =====
 function openOverlay(id){document.getElementById(id).classList.add('visible');}
 function closeOverlay(id){document.getElementById(id).classList.remove('visible');}
 document.getElementById("about-btn").onclick = ()=>openOverlay("about-overlay");
 document.getElementById("about-close").onclick = ()=>closeOverlay("about-overlay");
 document.getElementById("info-btn").onclick = ()=>openOverlay("info-overlay");
 document.getElementById("info-close").onclick = ()=>closeOverlay("info-overlay");
+document.getElementById("more-close").onclick = ()=>closeOverlay("more-overlay");
 
-// ===== Info Slider =====
+
+// ===== Info Slider (Existing) =====
 const slider = document.getElementById("info-slider");
 let currentSlide=0;
 const totalSlides = slider.querySelectorAll(".info-slide").length;
@@ -151,8 +206,10 @@ document.getElementById("next-slide").onclick = ()=>{
   if(currentSlide<totalSlides-1){currentSlide++; slider.style.transform=`translateX(-${currentSlide*50}%)`;}
 };
 
-// ===== Menu Data =====
+// ===== Menu Data & Grid Generation (Existing) =====
 const menuData = [
+  // Item Lainnya/Icon yang dipindahkan dari header
+  { title:"Lainnya", desc:"Info dan kontak tambahan", href:"#", icon:"https://files.catbox.moe/o8bf91.jpg", isMore:true }, 
   { title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt", icon:"https://files.catbox.moe/8qo5yx.jpg" },
   { title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/8qo5yx.jpg" },
   { title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", icon:"https://files.catbox.moe/8qo5yx.jpg", isCopy:true },
@@ -162,18 +219,68 @@ const menuData = [
 const menuGrid=document.getElementById("menu-grid");
 menuGrid.innerHTML = menuData.map((item,index)=>{
   const content = `<div class='flex flex-col items-center gap-3'>
-    <img src='${item.icon}' class='w-16 h-16 rounded-full border-2 border-neon-cyan/50 object-cover shadow-lg'>
+    <img src='${item.icon}' alt='Icon untuk ${item.title}' class='w-16 h-16 rounded-full border-2 border-neon-cyan/50 object-cover shadow-lg'>
     <h3 class='text-xl font-bold text-neon-cyan'>${item.title}</h3>
     <p class='text-base text-soft-cyan/90 text-center'>${item.desc}</p>
   </div>`;
-  if(item.isCopy){return `<div onclick="copyLink('${item.href}')" class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s'>${content}</div>`;}
-  else{return `<a href='${item.href}' target='_blank' class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s'>${content}</a>`;}
+  
+  if(item.isMore){
+    return `<div onclick="openOverlay('more-overlay')" class='menu-item p-6 rounded-3xl border border-neon-purple/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s; border-color:var(--tw-colors-neon-purple);'>${content}</div>`;
+  }
+  else if(item.isCopy){
+    return `<div onclick="copyLink('${item.href}')" class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s'>${content}</div>`;
+  }
+  else{
+    return `<a href='${item.href}' target='_blank' class='menu-item p-6 rounded-3xl border border-neon-cyan/20 bg-black/40 backdrop-blur transition-all duration-300' style='animation-delay:${index*0.15}s'>${content}</a>`;
+  }
 }).join('');
 
 async function copyLink(link){try{await navigator.clipboard.writeText(link);showToast('Link berhasil disalin!');}catch(err){console.error(err);showToast('Gagal menyalin link.');}}
 function showToast(msg,duration=1500){const t=document.getElementById("toast");t.textContent=msg;t.style.opacity="1";setTimeout(()=>{t.style.opacity="0";},duration);}
 
-// ===== Particles =====
+// ===== Music Toggle Handler (Updated dengan Volume Slider) =====
+const bgMusic = document.getElementById('bg-music');
+const musicBtn = document.getElementById('music-toggle-btn');
+const musicIcon = document.getElementById('music-icon');
+const volumeSlider = document.getElementById('volume-slider'); 
+let isMusicPlaying = false; 
+
+// Set volume awal dari slider (nilai 40)
+bgMusic.volume = volumeSlider.value / 100;
+
+// Tambahkan event listener untuk slider volume
+volumeSlider.addEventListener('input', (e) => {
+    bgMusic.volume = e.target.value / 100;
+});
+
+bgMusic.play().then(() => {
+    isMusicPlaying = true;
+    musicBtn.classList.add('music-playing-pulse');
+}).catch(e => {
+    isMusicPlaying = false;
+    musicIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.5-4.5m0 0 4.5 4.5m-4.5-4.5 4.5-4.5M12 21.75V24m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+    showToast('Autoplay diblokir. Klik tombol speaker untuk memutar musik.', 3000);
+});
+
+function toggleMusic() {
+  if (isMusicPlaying) {
+    bgMusic.pause();
+    isMusicPlaying = false;
+    musicBtn.classList.remove('music-playing-pulse');
+    musicIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.5-4.5m0 0 4.5 4.5m-4.5-4.5 4.5-4.5M12 21.75V24m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+    showToast('Musik dimatikan.', 1000);
+  } else {
+    bgMusic.play();
+    isMusicPlaying = true;
+    musicBtn.classList.add('music-playing-pulse');
+    musicIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.45 8.293a5.25 5.25 0 0 1 0 7.414M12 18.75V21m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+    showToast('Musik diputar!', 1000);
+  }
+}
+
+musicBtn.addEventListener('click', toggleMusic);
+
+// ===== Particles (Existing) =====
 tsParticles.load({id:"tsparticles-gtzps",options:{background:{color:"transparent"},fpsLimit:60,particles:{number:{value:40,density:{enable:true,area:800}},color:{value:["#00e6ff","#ff00d4","#9d00ff","#00ff90"]},shape:{type:"circle"},opacity:{value:0.7},size:{value:{min:1,max:3}},move:{enable:true,speed:1},links:{enable:true,distance:120,color:"#00e6ff",opacity:0.12,width:1}},interactivity:{events:{onHover:{enable:true,mode:"repulse"},resize:true},modes:{repulse:{distance:100,duration:0.3}}}}});
 </script>
 
