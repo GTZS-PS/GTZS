@@ -112,12 +112,33 @@ body { margin:0; padding:0; font-family:'Rajdhani',sans-serif; background:black;
     font-size: 0.8rem;
     border-width: 1px; 
     border-radius: 8px;
+    /* Tambahkan style neon */
+    border-color: var(--tw-colors-neon-cyan);
+    color: var(--tw-colors-neon-cyan);
+    background: transparent;
+    transition: all 0.3s ease;
+}
+.action-button:hover {
+    background: var(--tw-colors-neon-cyan);
+    color: black;
+    box-shadow: 0 0 8px var(--tw-colors-neon-cyan);
 }
 
 .func-button {
     padding: 8px; 
     border-width: 1px;
+    border-radius: 8px;
+    border-color: var(--tw-colors-neon-cyan);
+    color: var(--tw-colors-neon-cyan);
+    background: transparent;
+    transition: all 0.3s ease;
 }
+.func-button:hover {
+    background: var(--tw-colors-neon-cyan);
+    color: black;
+    box-shadow: 0 0 8px var(--tw-colors-neon-cyan);
+}
+
 #volume-slider { width: 50px !important; } 
 
 /* Konten Utama: Mengurangi padding-top karena status bar hilang, agar konten naik sedikit */
@@ -182,11 +203,14 @@ footer {
 
 <header class="fixed-header-right">
   <div class="action-group">
-    <button id="about-btn" class="action-button">
+    <button id="about-btn" class="action-button font-bold font-rajdhani">
       Cara Join
     </button>
-    <button id="info-btn" class="action-button">
+    <button id="info-btn" class="action-button font-bold font-rajdhani">
       Info Server
+    </button>
+    <button id="more-btn" class="action-button font-bold font-rajdhani">
+      Lainnya
     </button>
   </div>
   <div class="func-group">
@@ -200,7 +224,7 @@ footer {
 
     <button id="music-toggle-btn" class="func-button">
       <svg id="music-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-        </svg>
+      </svg>
     </button>
   </div>
 </header>
@@ -210,8 +234,8 @@ footer {
 <div id="about-overlay" class="overlay">
   <div class="overlay-content max-w-lg w-[90%] p-6 bg-black/70 border border-neon-cyan rounded-2xl shadow-2xl text-white relative">
     <button id="about-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
-    <h2 class="text-xl font-bold text-neon-cyan mb-3 text-center">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</h2>
-    <div class="whitespace-pre-wrap leading-relaxed pl-4">
+    <h2 class="text-xl font-bold text-neon-cyan mb-3 text-center font-orbitron">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</h2>
+    <div class="whitespace-pre-wrap leading-relaxed pl-4 font-rajdhani text-sm">
       🌐 1️⃣ Buka menu Server<br>
       🏷️ 2️⃣ Masukkan nama server: **GTZS**<br>
       🧾 3️⃣ Tekan **Register / Daftar**<br>
@@ -227,18 +251,222 @@ footer {
     <button id="info-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
     <div id="info-slider" class="flex transition-transform duration-500 w-[200%]">
       <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
-        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">Versi Bahasa Indonesia 🇮🇩</h2>
+        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center font-orbitron">Versi Bahasa Indonesia 🇮🇩</h2>
         <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
-        <p class="text-center text-sm">✨ Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru 🎮💥</p>
+        <p class="text-center text-sm font-rajdhani">✨ Selami Dunia Baru Growtopia! GTZS Private Server menawarkan pengalaman unik & seru 🎮💥</p>
       </div>
       <div class="info-slide w-1/2 flex-shrink-0 px-4 text-white">
-        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center">English Version 🇺🇲</h2>
+        <h2 class="font-bold text-lg mb-2 text-neon-cyan text-center font-orbitron">English Version 🇺🇲</h2>
         <p class="text-xl font-orbitron mb-2 text-center">🌟 GTZS PRIVATE SERVER 🌟</p>
-        <p class="text-center text-sm">✨ Dive Into a New Growtopia World! GTZS Private Server offers a unique & exciting experience 🎮💥</p>
+        <p class="text-center text-sm font-rajdhani">✨ Dive Into a New Growtopia World! GTZS Private Server offers a unique & exciting experience 🎮💥</p>
       </div>
     </div>
     <div class="flex justify-center gap-4 mt-6">
       <button id="prev-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">◀</button>
+      <button id="next-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">▶</button>
+    </div>
+  </div>
+</div>
+
+<div id="more-overlay" class="overlay">
+  <div class="overlay-content max-w-sm w-[90%] p-6 bg-black/70 border border-neon-purple rounded-2xl shadow-2xl text-white relative">
+    <button id="more-close" class="absolute top-3 right-3 text-neon-magenta font-bold text-lg hover:scale-110 transition">✖</button>
+    <h2 class="text-xl font-bold text-neon-purple mb-4 text-center font-orbitron">⚙️ LAINNYA ⚙️</h2>
+    <p class="text-center text-soft-cyan font-rajdhani">Saat ini belum ada informasi tambahan. Nantikan update dari tim GTZS!</p>
+    <div class="mt-4 text-center">
+        <a href="https://chat.whatsapp.com/G8tlQPTaoe35LLQmeazR34?mode=wwt" target="_blank" class="text-neon-cyan hover:underline font-rajdhani font-bold">Gtzs Community (WA)</a>
+    </div>
+  </div>
+</div>
+
+<div id="layout-wrapper" class="layout-9-16">
+  <main id="main-content" class="main-content-anim relative z-20 flex items-center justify-start pt-20 pb-20 p-4 bg-cover bg-center" style="background-image:url('https://files.catbox.moe/2wqmke.jpeg');">
+    <div class="relative z-10 max-w-full w-full rounded-3xl p-6 bg-black/50 border border-neon-cyan/20 shadow-2xl backdrop-blur-md">
+
+      <div class="flex flex-col items-center mb-6">
+        <img src="https://files.catbox.moe/8qo5yx.jpg" alt="Server Icon Utama" class="w-20 h-20 rounded-full border-4 border-neon-cyan/80 object-cover shadow-2xl shadow-neon-cyan/40">
+        <h2 class="mt-3 font-orbitron text-2xl font-bold text-neon-cyan uppercase tracking-wider">GTZS PRIVATE SERVER</h2>
+        <p class="text-sm text-soft-cyan text-center font-rajdhani">Akses cepat ke semua sumber daya server.</p>
+      </div>
+
+      <section id="menu-grid" class="grid grid-cols-2 gap-4"></section> 
+      
+      <hr class="mt-6 mb-4 border-neon-cyan/30"> 
+      
+      <footer class="flex flex-col items-center justify-between gap-2">
+        <div id="live-clock" class="font-orbitron text-lg text-neon-cyan p-2 border border-neon-cyan/50 rounded-lg bg-black/40 shadow-inner shadow-neon-cyan/10">00:00:00</div>
+        <div class="text-xs text-soft-cyan opacity-80 font-rajdhani">© <span id="current-year"></span> GTZS - PS | Licensi GTZS STAFF</div>
+      </footer>
+    </div>
+  </main>
+</div>
+<script>
+// Ikon SVG
+const MUSIC_ICON_ON = `<path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.45 8.293a5.25 5.25 0 0 1 0 7.414M12 18.75V21m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+const MUSIC_ICON_OFF = `<path stroke-linecap="round" stroke-linejoin="round" d="M17.25 9.75 19.5 12m0 0 2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6 4.5-4.5m0 0 4.5 4.5m-4.5-4.5 4.5-4.5M12 21.75V24m.75-4.5H11.25m3.75 0h-3.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />`;
+// Ikon untuk Rasio 9:16 (Vertikal - Mobile)
+const ASPECT_ICON_9_16 = `<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />`;
+// Ikon untuk Rasio 16:9 (Horizontal - Desktop)
+const ASPECT_ICON_16_9 = `<path stroke-linecap="round" stroke-linejoin="round" d="M4 8.25V4.5M4.5 4.5h3.75M20 15.75v3.75M19.5 19.5h-3.75M4 15.75v3.75M4.5 19.5h3.75M20 8.25V4.5M19.5 4.5h-3.75" />`;
+
+
+// Variabel Rasio Aspek
+let is16_9 = false;
+const layoutWrapper = document.getElementById('layout-wrapper');
+const toggleBtn = document.getElementById('toggle-aspect-ratio-btn');
+const aspectRatioIcon = document.getElementById('aspect-ratio-icon');
+
+// INISIALISASI ICON RASIO ASPEK (Default 9:16)
+aspectRatioIcon.innerHTML = ASPECT_ICON_9_16; 
+
+
+// ===== Sound/Music Logic =====
+const bgMusic = document.getElementById('bg-music');
+const volumeSlider = document.getElementById('volume-slider');
+const musicToggleBtn = document.getElementById('music-toggle-btn');
+const musicIcon = document.getElementById('music-icon');
+let isMusicPlaying = false; 
+
+// Inisialisasi Volume dan Ikon
+bgMusic.volume = volumeSlider.value / 100;
+musicIcon.innerHTML = MUSIC_ICON_OFF; 
+bgMusic.muted = true; // Mulai dalam keadaan muted
+
+// 🔊 Fungsi untuk Toggling Musik
+function toggleMusic() {
+    // Jika sedang muted, coba play
+    if (bgMusic.muted) {
+        bgMusic.muted = false;
+        // Hanya panggil play jika belum diputar (agar tidak ada error Promise)
+        if (!isMusicPlaying) {
+             bgMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicIcon.innerHTML = MUSIC_ICON_ON;
+                musicToggleBtn.classList.add('music-playing-pulse');
+                showToast('Musik: ON');
+            }).catch(error => {
+                console.error("Autoplay failed, user interaction needed:", error);
+                bgMusic.muted = true;
+                musicIcon.innerHTML = MUSIC_ICON_OFF;
+                musicToggleBtn.classList.remove('music-playing-pulse');
+                showToast('Klik lagi untuk memutar musik.');
+            });
+        } else {
+             // Jika sudah diputar (isMusicPlaying=true) tapi muted
+             musicIcon.innerHTML = MUSIC_ICON_ON;
+             musicToggleBtn.classList.add('music-playing-pulse');
+             showToast('Musik: ON');
+        }
+
+    } else {
+        // Jika sedang tidak muted, mute
+        bgMusic.muted = true;
+        musicIcon.innerHTML = MUSIC_ICON_OFF;
+        musicToggleBtn.classList.remove('music-playing-pulse');
+        showToast('Musik: OFF (Mute)');
+    }
+}
+
+musicToggleBtn.addEventListener('click', toggleMusic);
+
+volumeSlider.addEventListener('input', (e) => {
+    bgMusic.volume = e.target.value / 100;
+    showToast(`Volume: ${e.target.value}%`);
+    
+    // Auto-unmute jika volume dinaikkan dan musik belum di-play (atau di-mute secara manual)
+    if (e.target.value > 0 && bgMusic.muted) {
+        bgMusic.muted = false;
+        if (!isMusicPlaying) {
+             bgMusic.play().then(() => {
+                isMusicPlaying = true;
+                musicIcon.innerHTML = MUSIC_ICON_ON;
+                musicToggleBtn.classList.add('music-playing-pulse');
+             }).catch(() => {
+                 bgMusic.muted = true; // Gagal play, kembalikan mute
+                 musicIcon.innerHTML = MUSIC_ICON_OFF;
+                 musicToggleBtn.classList.remove('music-playing-pulse');
+             });
+        } else {
+             musicIcon.innerHTML = MUSIC_ICON_ON;
+             musicToggleBtn.classList.add('music-playing-pulse');
+        }
+    } else if (e.target.value == 0) {
+        // Auto-mute jika volume nol
+        bgMusic.muted = true;
+        musicIcon.innerHTML = MUSIC_ICON_OFF;
+        musicToggleBtn.classList.remove('music-playing-pulse');
+    }
+});
+
+// =========================================================
+// tsParticles Configuration
+// =========================================================
+tsParticles.load({
+    id: "tsparticles-gtzps",
+    options: {
+        fullScreen: { enable: true, zIndex: 1 }, 
+        background: { color: { value: "transparent" } },
+        interactivity: {
+            events: {
+                onHover: { enable: true, mode: "grab" },
+                onClick: { enable: true, mode: "push" },
+            },
+            modes: {
+                grab: { distance: 150, links: { opacity: 0.2 } },
+                push: { quantity: 4 },
+            }
+        },
+        particles: {
+            number: { value: 60, density: { enable: true, value_area: 800 } },
+            color: { value: ["#00e6ff", "#ff00d4", "#9d00ff"] }, 
+            shape: { type: "circle" },
+            opacity: { value: 0.7, random: true, anim: { enable: false } },
+            size: { value: 3, random: true, anim: { enable: true, speed: 4, size_min: 0.3, sync: false } },
+            links: {
+                enable: true,
+                distance: 150,
+                color: "#8fe6ff", 
+                opacity: 0.15,
+                width: 1
+            },
+            move: {
+                enable: true,
+                speed: 1.5,
+                direction: "none",
+                random: true,
+                straight: false,
+                out_mode: "out",
+                bounce: false,
+            }
+        },
+        shadow: {
+            enable: true,
+            blur: 5,
+            color: "#00e6ff" 
+        }
+    }
+});
+// =========================================================
+
+// Fungsi Toast Notification
+let toastTimeout;
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    clearTimeout(toastTimeout);
+    toast.textContent = message;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    toastTimeout = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+    }, 3000);
+}
+
+// Fungsi untuk mengganti rasio aspek
+function toggleAspectRatio() {
+    if (is16_9) {
+        layoutWrapper.classList.remove('layout-16-9');
+        layoutWrapper.classList.add('layout-9-ton>
       <button id="next-slide" class="px-4 py-2 border border-neon-cyan rounded-lg text-neon-cyan hover:bg-neon-cyan/20 transition">▶</button>
     </div>
   </div>
