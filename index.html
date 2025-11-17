@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTZS Private Server - CYBERPUNK OPTIMIZED</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+<style>
+/* ---------------------------------------------------- */
+/* ===== PERBAIKAN TAMPILAN FULL-WIDTH (CSS) ===== */
+/* ---------------------------------------------------- */
+body {
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh; 
+    background-color: #04040a; 
+}
+
+:root {
+    --color-primary: #00e6ff; /* Cyan Default (Informasi Penting/Active) */
+    --color-secondary: #ff00d4; /* Magenta Default (Aksi Peringatan/Highlight) */
+    --color-success: #00ff90; /* Green (Status Online/Good) */
+    --color-warning: #ff8c00; /* Orange (Perhatian/Load Tinggi) */
+}
+
+/* CYBERPUNK BACKGROUND DENGAN BLUR */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1; 
+    pointer-events: none;
+    background-image: url('https://files.catbox.moe/cep5dq.jpg'); 
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px) brightness(0.6); 
+    opacity: 0.35; 
+    transition: filter 0.5s ease;
+}
+
+/* Container utama diatur ke FULL WIDTH */
+#main-container {
+    position: relative;
+    width: 100vw;
+    min-height: 100vh;
+    max-width: none;
+    max-height: none;
+    margin: 0 auto;
+    overflow: visible;
+    background-color: transparent;
+    z-index: 10;
+    opacity: 0; 
+    transition: opacity 1s ease-in-out;
+    display: flex; 
+    flex-direction: column;
+}
+
+/* Tambahkan Max-Width pada konten dalam layout full screen untuk keterbacaan */
+.content-max-w {
+    max-width: 1280px; 
+    margin: 0 auto;
+    width: 100%; 
+    padding: 0 1rem; 
+}
+@media (min-width: 1024px) {
+    .content-max-w {
+        padding: 0 2rem;
+    }
+}
+
+
+/* ---------------------------------------------------- */
+/* ===== STYLE LAIN (DIUBAH UNTUK TEMA CYBERPUNK) ===== */
+/* ---------------------------------------------------- */
+
+/* Hidden element, kept for consistency */
+#cover-bg { display: none; }
+
+/* Overlay TV Glitch Effect (Scanlines) */
+#scanline-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0, 0, 0, 0.3) 2px, rgba(0, 0, 0, 0.3) 3px);
+    opacity: 0.7; 
+}
+#vignette-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    box-shadow: inset 0 0 300px rgba(0, 0, 0, 0.95); 
+}
+
+/* Grid Latar Belakang */
+#grid-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background-image: linear-gradient(rgba(0,255,255,0.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,0,212,0.08) 1px, transparent 1px);
+    background-size: 30px 30px; 
+    opacity: 0.6;
+}
+
+/* ---------------------------------------------------- */
+/* ===== POSISI TOMBOL MUSIK & WARNA (FIXED) ===== */
+/* ---------------------------------------------------- */
+
+#music-toggle-container, #color-toggle-container {
+    top: 1rem; 
+    padding: 0; 
+    z-index: 50;
+    transition: transform 0.3s ease;
+}
+#music-toggle-container { left: 1rem; }
+#color-toggle-container { right: 1rem; }
+
+/* Styling Tombol lebih tegas */
+.control-btn {
+    padding: 0.5rem 0.75rem;
+    background-color: rgba(10, 10, 10, 0.8); 
+    backdrop-filter: blur(5px);
+    border: 2px solid;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 5px var(--color-primary);
+}
+#music-toggle-btn { border-color: var(--color-primary); color: var(--color-primary); }
+#color-toggle-btn { border-color: var(--color-secondary); }
+
+
+/* --- ANIMASI & EFEK KHUSUS --- */
+.holographic-card {
+    border: 1px solid var(--color-primary); 
+    background: linear-gradient(145deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+    box-shadow: inset 0 0 10px var(--color-secondary)50, 0 0 5px var(--color-primary); 
+    transition: all 0.3s ease, transform 0.5s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    animation: subtleShift 15s ease-in-out infinite alternate;
+}
+.holographic-card:hover {
+    transform: scale(1.05) translateY(-2px); 
+    box-shadow: inset 0 0 15px var(--color-secondary)90, 0 0 15px var(--color-primary);
+}
+.holographic-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+}
+.holographic-card:hover::before {
+    transform: translateX(100%); 
+}
+
+/* Judul neon lebih kuat */
+.neon-title {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--color-primary);
+    text-shadow: 
+        0 0 5px var(--color-primary),
+        0 0 15px var(--color-primary),
+        0 0 30px var(--color-primary)50;
+    transition: all 0.3s ease;
+}
+
+/* Data Frame */
+.data-frame {
+    border: 1px solid var(--color-primary); 
+    background: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(3px); 
+    box-shadow: 0 0 10px rgba(0, 230, 255, 0.2); 
+    padding: 0.75rem; 
+    transition: all 0.3s ease;
+}
+.data-frame > p {
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* Tombol About Us/Cara Join */
+.pulsating-btn {
+    animation: pulse-border 3s infinite alternate;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+}
+@keyframes pulse-border {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 212, 0.4); border-color: var(--color-secondary); }
+    50% { box-shadow: 0 0 20px 5px rgba(255, 0, 212, 0.8); border-color: var(--color-secondary); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 0, 212, 0.4); border-color: var(--color-secondary); }
+}
+
+/* Animasi Lain */
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* Tambahkan opacity: 0 pada elemen yang akan dianimasikan */
+#main-feature-image { animation: subtleFlicker 10s infinite alternate, slideInUp 0.8s ease-out 0.5s forwards; opacity: 0; }
+.data-frame { animation: slideInUp 0.6s ease-out forwards; opacity: 0; }
+.data-frame:nth-child(1) { animation-delay: 1.0s; }
+.data-frame:nth-child(2) { animation-delay: 1.2s; }
+.data-frame:nth-child(3) { animation-delay: 1.4s; }
+
+/* Modal & Toast (Dipertahankan) */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 60;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+/* Terminal Log Cursor */
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+.cursor-blink {
+    display: inline-block;
+    animation: blink-cursor 1s infinite;
+}
+
+</style>
+</head>
+<body>
+
+<div id="music-toggle-container" class="absolute z-50">
+    <button id="music-toggle-btn" class="control-btn flex items-center gap-2 rounded-xl hover:scale-105 transition-transform duration-300">
+        <i id="music-icon" class="text-base transition-colors duration-300">🔇</i>
+        <span id="music-text" class="text-xs font-semibold tracking-wider text-white">OFF</span>
+    </button>
+</div>
+
+<div id="color-toggle-container" class="absolute z-50">
+    <button id="color-toggle-btn" class="control-btn flex items-center gap-2 rounded-xl hover:scale-105 transition-transform duration-300">
+        <span class="text-xs font-semibold tracking-wider text-white">🌈 Switch Color</span>
+    </button>
+</div>
+
+<div id="loading-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 transition-opacity duration-1000">
+    <div class="flex flex-col items-center">
+        <h2 id="loading-text" class="text-3xl sm:text-4xl font-extrabold text-[var(--color-success)] tracking-wider" style="font-family: 'Orbitron', sans-serif; text-shadow: 0 0 10px var(--color-success), 0 0 20px var(--color-success);">INITIATING SEQUENCE...</h2>
+        <div class="mt-4 w-40 h-1 bg-[var(--color-success)]/20 rounded overflow-hidden">
+            <div id="loading-bar" class="h-full bg-[var(--color-success)] transition-all duration-300 ease-linear"></div>
+        </div>
+    </div>
+</div>
+
+<audio id="background-music" loop src="https://files.catbox.moe/gt808p.mp3"></audio>
+<audio id="click-fx" src="https://files.catbox.moe/4e889j.mp3"></audio>
+<audio id="glitch-fx" src="https://files.catbox.moe/s968l9.mp3"></audio>
+
+<div id="main-container" class="relative z-10 text-white">
+    <div id="cover-bg"></div> 
+    <div id="grid-bg"></div>
+    <div id="tsparticles-gtzps" class="absolute inset-0 z-5"></div> 
+    <div id="scanline-overlay"></div>
+    <div id="vignette-overlay"></div>
+    
+    <div class="content-max-w">
+        <header class="pt-16 pb-6 relative z-10"> 
+            <div class="text-center mb-6">
+                <h1 class="neon-title text-4xl sm:text-6xl font-extrabold tracking-widest leading-none">
+                    GTZS PRIVATE SERVER
+                </h1>
+                <p id="tagline" class="text-sm text-white/70 mt-3 h-5 font-orbitron tracking-wide"></p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto"> 
+                <div id="main-feature-image" 
+                    class="w-full h-48 sm:h-64 bg-cover bg-center rounded-xl border-2 mb-6" 
+                    style="background-image: url('https://files.catbox.moe/cep5dq.jpg'); 
+                            border-color: var(--color-primary); 
+                            box-shadow: 0 0 20px var(--color-primary);">
+                </div>
+                <div class="grid grid-cols-3 gap-3 text-center text-xs sm:text-sm font-bold">
+                    <div class="rounded-xl data-frame">
+                        <p class="text-white/60">PLAYERS</p>
+                        <p id="player-count" class="text-lg text-[var(--color-primary)]">...</p>
+                    </div>
+                    <div class="rounded-xl data-frame relative">
+                        <p class="text-white/60">STATUS</p>
+                        <p id="server-status" class="text-lg text-[var(--color-success)]"></p>
+                        <span id="status-pulse" class="absolute w-2 h-2 rounded-full top-2 right-2 bg-[var(--color-success)]" style="animation: pulse-status 2s infinite;"></span>
+                    </div>
+                    <div class="rounded-xl data-frame">
+                        <p class="text-white/60">LOAD</p>
+                        <div class="w-full h-2 bg-black/50 mt-1 rounded-full">
+                            <div id="server-health-bar" class="h-full rounded-full transition-all duration-500" style="width: 50%; background-color: var(--color-primary);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="py-6 relative z-10">
+            <section id="menu-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                </section>
+            
+            <button id="about-btn" class="w-full mt-8 py-4 font-orbitron text-xl font-bold border-2 transition-all duration-300 rounded-xl text-[var(--color-secondary)] shadow-lg shadow-transparent pulsating-btn" onclick="showModal('about-modal')">
+                [ ACCESS PROTOCOL ] / CARA JOIN
+            </button>
+        </main>
+
+        <footer class="p-6 relative z-10 mt-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm text-white/50 font-rajdhani border-t border-white/10">
+            <div class="flex flex-col gap-2 items-center sm:items-start mb-3 sm:mb-0">
+                <div id="time-display-container" class="flex gap-4 font-bold text-sm">
+                    <span id="wib-clock" class="text-[var(--color-success)]" style="text-shadow: 0 0 5px var(--color-success);">WIB: --</span>
+                    <span id="wita-clock" class="text-[var(--color-primary)]" style="text-shadow: 0 0 5px var(--color-primary);">WITA: --</span>
+                    <span id="wit-clock" class="text-[var(--color-secondary)]" style="text-shadow: 0 0 5px var(--color-secondary);">WIT: --</span>
+                </div>
+                <p class="font-orbitron text-white/70">SYSTEM TIME-SYNC COMPLETE</p>
+            </div>
+            <p>GTZS PS | © <span id="current-year"></span> | V2.1.0 | <span class="text-[var(--color-primary)]">CYBER-OPT</span></p>
+        </footer>
+    </div>
+    
+    <div id="terminal-log-container" class="hidden sm:block fixed bottom-0 right-0 p-4 w-72 bg-black/80 border-t-4 border-l-4 border-[var(--color-success)] rounded-tl-lg z-20 shadow-2xl shadow-[var(--color-success)]/20">
+        <p class="font-orbitron text-xs text-[var(--color-success)] mb-1">SYSTEM_LOG:</p>
+        <div id="terminal-log" class="text-[var(--color-success)] text-xs h-32 overflow-y-scroll space-y-1 font-mono">
+        </div>
+    </div>
+</div>
+
+<div id="about-modal" class="modal-overlay">
+    <div class="flex justify-center items-center h-full p-4 sm:p-8">
+        <div class="modal-content w-full max-w-lg bg-black/90 border-2 border-[var(--color-primary)] shadow-2xl shadow-[var(--color-primary)]/40 rounded-xl p-6 relative">
+            <h2 class="font-orbitron neon-title text-2xl mb-4 text-center">GTZS ACCESS INITIATION PROTOCOL</h2>
+            <ol class="space-y-3 list-decimal list-inside text-sm sm:text-base text-white/90">
+                <li class="text-[var(--color-primary)]">Verifikasi Klien Utama (Pastikan Anda menggunakan versi klien game yang terautentikasi dan kompatibel).</li>
+                <li class="text-[var(--color-primary)]">Ambil File Konfigurasi (Download **Virtual Host Config File (.txt)** dari data link di Menu Utama).</li>
+                <li class="text-[var(--color-primary)]">Muat Konfigurasi (Load file config ke dalam **Virtual Host Application** di perangkat Anda).</li>
+                <li class="text-[var(--color-primary)]">Aktifkan Gerbang (Aktifkan **Virtual Host Bridge** dan jalankan Klien Game GTZS Anda).</li>
+                <li class="text-[var(--color-primary)]">Sinkronisasi (Pastikan **Server Status** di halaman ini menunjukkan **[ONLINE]**. Anda siap masuk ke dalam Jaringan GTZS-PS. **Welcome to the Grid.**)</li>
+            </ol>
+            <button class="absolute top-2 right-4 text-xl text-white/70 hover:text-[var(--color-secondary)]" onclick="closeModal('about-modal')">&times;</button>
+        </div>
+    </div>
+</div>
+
+<div id="rules-modal" class="modal-overlay">
+    <div class="flex justify-center items-center h-full p-4 sm:p-8">
+        <div class="modal-content w-full max-w-lg bg-black/90 border-2 border-[var(--color-secondary)] shadow-2xl shadow-[var(--color-secondary)]/40 rounded-xl p-6 relative">
+            <h2 class="font-orbitron text-2xl mb-4 text-center text-[var(--color-secondary)]" style="text-shadow: 0 0 5px var(--color-secondary);">GTZS PROTOCOL: ACCESS MANIFEST</h2>
+            <h3 class="font-bold mt-4 text-[var(--color-primary)]">1. ID/PENGHUNI: Verifikasi Identitas</h3>
+            <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                <li>Setiap ID (In-Game Name) harus melewati filter etika (dilarang SARA, provokatif, atau ujaran kebencian). Pelanggaran = **Account Lock/Wipe**.</li>
+                <li>Akun yang **Inactive (Non-Logged In)** selama **90 Hari Siklus** akan ditandai untuk **Defragmentasi Data** (Reset/Hapus).</li>
+            </ul>
+            <h3 class="font-bold mt-4 text-[var(--color-primary)]">2. INTEGRITAS DATA: Anti-Corruption Code</h3>
+            <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                <li>Penggunaan perangkat lunak pihak ketiga, modifikasi klien, atau *exploit* yang memberikan keuntungan non-standar **DILARANG KERAS** dan akan memicu **TERMINASI AKSES PERMANEN (HWID Ban)**.</li>
+                <li>Segera laporkan setiap anomali (*bug*) yang ditemukan ke Admin. **Eksploitasi Cacat Sistem** dianggap pelanggaran berat.</li>
+            </ul>
+            <h3 class="font-bold mt-4 text-[var(--color-primary)]">3. ETIKA KOMUNIKASI: Jaga Frekuensi</h3>
+            <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                <li>Jaga **Zero Tolerance** terhadap Toxic Behavior, SARA, dan pelecehan verbal. Hormati sesama Player dan **PS Operators (Admin)**.</li>
+                <li>Aktivitas **Spamming/Flooding** di In-Game Chat atau Saluran Komunitas dilarang untuk menjaga Bandwidth Komunikasi.</li>
+            </ul>
+            <h3 class="font-bold mt-4 text-[var(--color-primary)]">4. PROTOKOL DONASI: Resource Contribution</h3>
+            <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                <li>Kontribusi (Donasi) bersifat **sukarela** dan **NON-REFUNDABLE**. Pastikan keputusan Anda sudah final.</li>
+                <li>Donasi adalah dukungan, bukan **Imunitas Protocol**. Semua pemain, terlepas dari donasi, tunduk pada Manifest ini.</li>
+            </ul>
+            <button class="absolute top-2 right-4 text-xl text-white/70 hover:text-[var(--color-secondary)]" onclick="closeModal('rules-modal')">&times;</button>
+        </div>
+    </div>
+</div>
+
+<div id="faq-modal" class="modal-overlay">
+    <div class="flex justify-center items-center h-full p-4 sm:p-8">
+        <div class="modal-content w-full max-w-lg bg-black/90 border-2 border-[var(--color-success)] shadow-2xl shadow-[var(--color-success)]/40 rounded-xl p-6 relative">
+            <h2 class="font-orbitron text-2xl mb-4 text-center text-[var(--color-success)]" style="text-shadow: 0 0 5px var(--color-success);">FAQ: DATABASE Q & A</h2>
+            <div class="space-y-4 text-sm sm:text-base text-white/90">
+                <div>
+                    <h3 class="font-bold text-[var(--color-primary)]">Q: [ERR 404] Akses ditolak/Gagal Terhubung ke GTZS-PS Core?</h3>
+                    <p class="ml-4">A: Lakukan **Verifikasi Koneksi**: 1. Pastikan **Virtual Host/VPN Config** Anda telah **ACTIVATE**. 2. Periksa **Server Status** di halaman ini (harus **ONLINE**). 3. Lakukan **Re-login** klien game Anda.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[var(--color-primary)]">Q: [DATA RETENTION] Seberapa aman data akun saya dari *WIPE/RESET*?</h3>
+                    <p class="ml-4">A: Data disimpan dengan protokol **Multi-Layer Backup**. **Full Reset** hanya dipicu oleh **Kerusakan Data Mayor** atau **Major System Overhaul (Update Besar)**. Notifikasi akan disebarkan minimal 7 hari sebelum eksekusi.</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-[var(--color-primary)]">Q: [RESOURCE ACQUISITION] Bagaimana cara mendapatkan Mata Uang/Item Eksklusif?</h3>
+                    <p class="ml-4">A: Item langka diperoleh melalui **Event Global, Daily Login Rewards, Quest System**, atau **Kontribusi Sumber Daya (Donasi)**. Hubungi Admin (Link Kontak) untuk detail Donasi.</p>
+                </div>
+            </div>
+            <button class="absolute top-2 right-4 text-xl text-white/70 hover:text-[var(--color-secondary)]" onclick="closeModal('faq-modal')">&times;</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-notification" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-black/80 text-white rounded-full border border-[var(--color-primary)]/50 text-sm hidden z-50">
+    Link disalin!
+</div>
+
+<div id="custom-context-menu" class="absolute bg-black/90 border border-[var(--color-secondary)] p-2 rounded-lg shadow-xl z-50 hidden text-sm">
+    <a href="#" class="block px-3 py-1 text-[var(--color-primary)] hover:bg-white/10" onclick="copyServerLink(event)">COPY SERVER LINK</a>
+    <a href="#" class="block px-3 py-1 text-[var(--color-secondary)] hover:bg-white/10" onclick="showModal('rules-modal'); event.preventDefault()">VIEW RULES</a>
+    <a href="https://wa.me/6281234567890" target="_blank" class="block px-3 py-1 text-[var(--color-success)] hover:bg-white/10">CONTACT ADMIN</a>
+    <a href="#" class="block px-3 py-1 text-[var(--color-warning)] hover:bg-white/10" onclick="showModal('faq-modal'); event.preventDefault()">SHOW FAQ</a>
+</div>
+
+<script>
+// ----------------------------------------------------
+// ===== MENU DATA & GRID RENDERING =====
+// ----------------------------------------------------
+const menuData = [
+    { title: "Server Rules & Policy", desc: "Baca sebelum bermain.", isRules: true, actionText: "VIEW RULES" },
+    { title: "FAQ (Tanya Jawab)", desc: "Pertanyaan umum.", isFAQ: true, actionText: "VIEW FAQ" },
+    { title: "Virtual Host", desc: "Download file config terbaru.", link: "https://www.mediafire.com/file/gtzsbeta.txt", actionText: "DOWNLOAD FILE", isDownload: true },
+    { title: "WhatsApp Community", desc: "Bergabung dengan grup.", link: "https://chat.whatsapp.com/L1nKgrUP", actionText: "JOIN GROUP" },
+    { title: "Report Bug & Error", desc: "Layanan 24 jam.", link: "https://wa.me/6281234567890", actionText: "WHATSAPP (Admin 1)" },
+    { title: "Power Tunnel", desc: "Salin link Power Tunnel.", link: "https://t.me/PowerTunnelBot", actionText: "COPY LINK", isCopy: true },
+    { title: "Contact Admin 1", desc: "Pertanyaan & Donasi.", link: "https://wa.me/6281234567890", actionText: "WHATSAPP", isSecondary: true },
+    { title: "Contact Admin 2", desc: "Bantuan Teknis Cepat.", link: "https://wa.me/6285678901234", actionText: "WHATSAPP", isSecondary: true },
+];
+
+const menuGrid = document.getElementById('menu-grid');
+menuGrid.innerHTML = menuData.map(item => {
+    let actionClass = 'action-primary';
+    if (item.isSecondary) actionClass = 'action-secondary';
+    if (item.isRules || item.isFAQ) actionClass = 'action-success';
+
+    let linkAttr = '';
+    let clickHandler = '';
+
+    if (item.isRules) {
+        clickHandler = `onclick="showModal('rules-modal'); playClickSound();"`;
+    } else if (item.isFAQ) {
+        clickHandler = `onclick="showModal('faq-modal'); playClickSound();"`;
+    } else if (item.isCopy) {
+        clickHandler = `onclick="copyServerLink(event); event.preventDefault();"`;
+    } else if (item.link) {
+        linkAttr = `href="${item.link}" target="_blank"`;
+        clickHandler = `onclick="playClickSound();"`;
+    }
+
+    const contentHTML = `
+        <h3 class="font-orbitron font-bold text-xl line1">${item.title}</h3>
+        <p class="text-white/70 line2">${item.desc}</p>
+    `;
+    
+    // Perhatikan: Class Holographic-card kini memiliki flexbox untuk penataan yang rapi
+    return `<a ${linkAttr} ${clickHandler} class='holographic-card block p-4 sm:p-5 rounded-xl relative flex flex-col justify-between h-full ${!item.isCopy && !item.isRules && !item.isFAQ ? '' : 'cursor-pointer'}'>` +
+        contentHTML +
+        `<div class='mt-3'>
+            <div class='menu-action-tag inline-block text-xs px-3 py-1 rounded-full bg-black/70 border ${actionClass} font-bold font-orbitron'>${item.actionText}</div>
+        </div>` +
+        `</a>`;
+}).join('');
+
+
+// ----------------------------------------------------
+// ===== LOGIC SCRIPT LAINNYA =====
+// ----------------------------------------------------
+
+const loadingOverlay = document.getElementById('loading-overlay');
+const loadingText = document.getElementById('loading-text');
+const loadingBar = document.getElementById('loading-bar');
+const mainContainer = document.getElementById('main-container');
+const loadingMessages = ["CONNECTING TO PS CORE...", "LOADING ASSETS & CONFIG...", "ENCRYPTING DATA STREAM...", "INITIATING SEQUENCE..."];
+
+function startLoadingSequence() {
+    let messageIndex = 0;
+    let progress = 0;
+
+    const loadingInterval = setInterval(() => {
+        progress += 10;
+        loadingBar.style.width = `${progress}%`;
+        
+        if (progress > 100) {
+            clearInterval(loadingInterval);
+            // Tambahkan class untuk fade-out
+            loadingOverlay.classList.add('opacity-0'); 
+            return;
+        }
+        
+        if (progress % 30 === 0 && messageIndex < loadingMessages.length) {
+            scrambleText(loadingText, loadingMessages[messageIndex], 500); 
+            messageIndex++;
+        }
+    }, 300);
+
+    // Hide overlay after a delay and start main content fade-in
+    setTimeout(() => {
+        loadingOverlay.style.display = 'none';
+        mainContainer.style.opacity = '1';
+    }, 4000); 
+}
+
+// --- COLOR TOGGLE LOGIC ---
+const colorToggleBtn = document.getElementById('color-toggle-btn');
+const root = document.documentElement;
+const gridBg = document.getElementById('grid-bg');
+const colorSchemes = [
+    {
+        name: 'CYAN/MAGENTA',
+        primary: '#00e6ff', 
+        secondary: '#ff00d4', 
+        success: '#00ff90', 
+        warning: '#ff8c00',
+        borderColor: '#ff00d4' 
+    },
+    {
+        name: 'GREEN/ORANGE',
+        primary: '#00ff90',
+        secondary: '#ff8c00', 
+        success: '#00e6ff', 
+        warning: '#ff00d4',
+        borderColor: '#00ff90' 
+    }
+];
+let currentColorIndex = 0;
+
+function applyColorScheme(scheme) {
+    root.style.setProperty('--color-primary', scheme.primary);
+    root.style.setProperty('--color-secondary', scheme.secondary);
+    root.style.setProperty('--color-success', scheme.success);
+    root.style.setProperty('--color-warning', scheme.warning);
+    
+    colorToggleBtn.style.borderColor = scheme.borderColor; 
+
+    const mainImage = document.getElementById('main-feature-image');
+
+    if(scheme.name === 'GREEN/ORANGE') {
+        gridBg.style.backgroundImage = 'linear-gradient(rgba(0,255,144,0.08) 1px, transparent 1px),linear-gradient(90deg, rgba(255,140,0,0.08) 1px, transparent 1px)';
+    } else {
+        gridBg.style.backgroundImage = 'linear-gradient(rgba(0,255,255,0.08) 1px, transparent 1px),linear-gradient(90deg, rgba(255,0,212,0.08) 1px, transparent 1px)';
+    }
+    
+    document.querySelectorAll('.data-frame').forEach(el => {
+        el.style.borderColor = scheme.primary; 
+        el.style.boxShadow = `0 0 10px ${scheme.primary}4D`; 
+    });
+    
+    if (mainImage) {
+         mainImage.style.borderColor = scheme.primary;
+         mainImage.style.boxShadow = `0 0 20px ${scheme.primary}`;
+    }
+    
+    updateClock(); 
+    showToast(`Color Scheme: ${scheme.name} Applied!`);
+}
+
+colorToggleBtn.onclick = () => {
+    playClickSound();
+    currentColorIndex = (currentColorIndex + 1) % colorSchemes.length;
+    applyColorScheme(colorSchemes[currentColorIndex]);
+    document.getElementById('color-toggle-container').style.transform = ''; 
+};
+// --- UTILITIES & EFFECTS ---
+
+// 1. SOUND CONTROL (FUNGSI INI SUDAH DIPERBAIKI)
+const bgMusic = document.getElementById('background-music');
+const clickFX = document.getElementById('click-fx');
+const glitchFX = document.getElementById('glitch-fx');
+const musicToggleBtn = document.getElementById('music-toggle-btn');
+const musicIcon = document.getElementById('music-icon'); 
+const musicText = document.getElementById('music-text'); 
+let isMusicPlaying = false;
+
+function playClickSound() {
+    if (clickFX) {
+        clickFX.currentTime = 0;
+        clickFX.play().catch(e => console.log('Click sound failed to play:', e));
+    }
+}
+
+function playGlitchSound() {
+    if (glitchFX) {
+        glitchFX.currentTime = 0;
+        glitchFX.play().catch(e => console.log('Glitch sound failed to play:', e));
+    }
+}
+
+// PERBAIKAN FUNGSI MUSIK: Hapus listener mainContainer
+function initializeMusic() {
+    bgMusic.volume = 0.3;
+    
+    musicIcon.textContent = '🔇'; 
+    musicText.textContent = 'OFF';
+    isMusicPlaying = false;
+
+    // Event listener utama pada tombol
+    musicToggleBtn.addEventListener('click', () => {
+        playClickSound();
+        if (isMusicPlaying) {
+            // PAUSE
+            bgMusic.pause();
+            musicIcon.textContent = '🔇'; 
+            musicText.textContent = 'OFF';
+            isMusicPlaying = false;
+        } else {
+            // PLAY
+            bgMusic.play().then(() => {
+                // Berhasil play
+                musicIcon.textContent = '🔊'; 
+                musicText.textContent = 'ON';
+                isMusicPlaying = true;
+            }).catch(e => {
+                // Gagal play (karena browser)
+                console.log('Music play failed, usually due to browser autoplay policy:', e);
+                showToast('Music blocked by browser. Please try clicking the page or button again.');
+                musicIcon.textContent = '🔇'; 
+                musicText.textContent = 'OFF';
+                isMusicPlaying = false;
+            });
+        }
+    });
+}
+
+
+// 2. TEXT SCRAMBLE EFFECT
+function scrambleText(element, newText, duration = 300) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()_+';
+    let originalText = element.textContent;
+    let iterations = 0;
+    const totalIterations = duration / 50; 
+
+    const interval = setInterval(() => {
+        element.textContent = Array.from(originalText)
+            .map((char, index) => {
+                if (index < iterations) {
+                    return newText[index] || char;
+                }
+                return chars[Math.floor(Math.random() * chars.length)];
+            })
+            .join('');
+
+        if (iterations >= newText.length) {
+            clearInterval(interval);
+            element.textContent = newText;
+        }
+        iterations += 1;
+    }, 50);
+}
+
+
+// 3. TOAST NOTIFICATION
+function showToast(message) {
+    const toast = document.getElementById('toast-notification');
+    toast.textContent = message;
+    toast.classList.remove('hidden');
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 2500);
+}
+
+
+// 4. MODAL CONTROL
+function showModal(id) {
+    playClickSound();
+    document.getElementById(id).classList.add('active');
+    const mainContainer = document.getElementById('main-container');
+    // Tambahkan efek blur pada konten utama di belakang modal
+    mainContainer.style.filter = 'blur(5px)';
+}
+
+function closeModal(id) {
+    playClickSound();
+    document.getElementById(id).classList.remove('active');
+    document.getElementById('main-container').style.filter = '';
+}
+
+document.getElementById('about-btn').addEventListener('click', (e) => {
+    e.preventDefault();
+    showModal('about-modal');
+});
+
+
+// 5. COPY SERVER LINK (Untuk Tombol COPY dan Context Menu)
+function copyServerLink(e) {
+    e.preventDefault();
+    playGlitchSound();
+    const serverLink = window.location.href; 
+    navigator.clipboard.writeText(serverLink).then(() => {
+        showToast('Server Link Disalin!');
+        hideContextMenu();
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        showToast('Gagal menyalin link.');
+    });
+}
+
+
+// 6. CONTEXT MENU (Klik Kanan)
+const customContextMenu = document.getElementById('custom-context-menu');
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    customContextMenu.style.top = `${e.clientY}px`;
+    customContextMenu.style.left = `${e.clientX}px`;
+    customContextMenu.style.display = 'block';
+
+    const menuWidth = customContextMenu.offsetWidth;
+    const menuHeight = customContextMenu.offsetHeight;
+    if (e.clientX + menuWidth > window.innerWidth) {
+        customContextMenu.style.left = `${e.clientX - menuWidth}px`;
+    }
+    if (e.clientY + menuHeight > window.innerHeight) {
+        customContextMenu.style.top = `${e.clientY - menuHeight}px`;
+    }
+});
+
+document.addEventListener('click', () => {
+    hideContextMenu();
+});
+
+function hideContextMenu() {
+    customContextMenu.style.display = 'none';
+}
+
+
+// 7. DATA & CORE FUNCTIONS
+const serverStatusElement = document.getElementById('server-status');
+const playerCountElement = document.getElementById('player-count');
+const healthBar = document.getElementById('server-health-bar');
+const statusPulse = document.getElementById('status-pulse');
+let isServerOnline = true;
+
+function updateServerStatus() {
+    const playerCount = Math.floor(Math.random() * (500 - 150 + 1)) + 150; 
+    const isOnline = Math.random() < 0.95; 
+    const loadPercentage = Math.floor(Math.random() * (90 - 30 + 1)) + 30;
+
+    playerCountElement.textContent = playerCount.toLocaleString();
+
+    if (isOnline) {
+        if (!isServerOnline) {
+            scrambleText(serverStatusElement, 'ONLINE', 100);
+            isServerOnline = true;
+        } else {
+            serverStatusElement.textContent = 'ONLINE';
+        }
+        
+        serverStatusElement.className = 'text-[var(--color-success)]';
+        statusPulse.className = 'absolute w-2 h-2 rounded-full top-2 right-2 bg-[var(--color-success)]';
+        statusPulse.style.animation = 'pulse-status 2s infinite';
+    } else {
+        if (isServerOnline) {
+            playGlitchSound();
+            scrambleText(serverStatusElement, 'OFFLINE', 300);
+            isServerOnline = false;
+        } else {
+            serverStatusElement.textContent = 'OFFLINE';
+        }
+        
+        serverStatusElement.className = 'text-[var(--color-secondary)]';
+        statusPulse.className = 'absolute w-2 h-2 rounded-full top-2 right-2 bg-[var(--color-secondary)]';
+        statusPulse.style.animation = 'none';
+    }
+
+    healthBar.style.width = loadPercentage + '%';
+    let color;
+    if (loadPercentage < 50) {
+        color = 'var(--color-primary)'; 
+    } else if (loadPercentage < 80) {
+        color = 'var(--color-warning)'; 
+    } else {
+        color = 'var(--color-secondary)'; 
+    }
+    healthBar.style.backgroundColor = color;
+}
+
+
+// 8. LIVE CLOCK (MULTI-ZONE)
+function getFormattedTime(timeZone) {
+    const options = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        timeZone: timeZone,
+        hour12: false 
+    };
+    return new Date().toLocaleTimeString('en-US', options); 
+}
+
+function updateClock() {
+    const wibElement = document.getElementById('wib-clock');
+    const witaElement = document.getElementById('wita-clock');
+    const witElement = document.getElementById('wit-clock');
+
+    const wibTime = getFormattedTime('Asia/Jakarta');
+    wibElement.textContent = `WIB: ${wibTime}`;
+
+    const witaTime = getFormattedTime('Asia/Makassar');
+    witaElement.textContent = `WITA: ${witaTime}`;
+
+    const witTime = getFormattedTime('Asia/Jayapura');
+    witElement.textContent = `WIT: ${witTime}`;
+}
+
+
+// 9. TAGLINE ANIMATION
+const taglines = [
+    "Welcome to GTZS Private Server 🎮",
+    "Cyberpunk Racing, Optimized Mobile",
+    "High Ping, High Risk, High Reward",
+    "INIT: Core Systems Online...",
+    "Join our WhatsApp Community Now!"
+];
+const taglineElement = document.getElementById('tagline');
+let currentTaglineIndex = 0;
+
+function startTickerAnimation(tags, element) {
+    if (tags.length === 0) return;
+
+    const updateTagline = () => {
+        const newTag = tags[currentTaglineIndex];
+        scrambleText(element, newTag, 500);
+        currentTaglineIndex = (currentTaglineIndex + 1) % tags.length;
+    };
+
+    updateTagline(); 
+    setInterval(updateTagline, 5000); 
+}
+
+
+// 10. TERMINAL LOG (DESKTOP ONLY)
+const terminalLog = document.getElementById('terminal-log');
+const logMessages = [
+    "[INFO]: System check initiated...",
+    "[INFO]: Server ping successful: 10ms",
+    "[LOAD]: Player configuration loaded.",
+    "[SEC]: Anti-DDoS Shield active.",
+    "[CORE]: Welcome. Ready for input."
+];
+let currentLogIndex = 0;
+
+function appendLogEntry(message) {
+    const logDiv = document.createElement('div');
+    logDiv.className = 'log-entry';
+    terminalLog.appendChild(logDiv);
+    
+    let charIndex = 0;
+    const typeInterval = setInterval(() => {
+        if (charIndex < message.length) {
+            logDiv.textContent += message.charAt(charIndex);
+            charIndex++;
+            terminalLog.scrollTop = terminalLog.scrollHeight; 
+        } else {
+            clearInterval(typeInterval);
+            // Hapus kursor lama jika ada
+            Array.from(terminalLog.children).forEach(child => {
+                const cursor = child.querySelector('.cursor-blink');
+                if (cursor) cursor.remove();
+            });
+            // Tambah kursor baru
+            const cursorSpan = document.createElement('span');
+            cursorSpan.textContent = ' _';
+            cursorSpan.classList.add('cursor-blink');
+            logDiv.appendChild(cursorSpan);
+        }
+    }, 20); 
+
+    if (terminalLog.children.length > 5) {
+        terminalLog.removeChild(terminalLog.children[0]);
+    }
+}
+
+function startTerminalLog() {
+    if (window.innerWidth < 640) return; 
+
+    const nextLog = () => {
+        if (currentLogIndex >= logMessages.length) {
+            currentLogIndex = 0; 
+        }
+        appendLogEntry(logMessages[currentLogIndex]);
+        currentLogIndex++;
+        
+        setTimeout(nextLog, Math.random() * 7000 + 8000); 
+    };
+
+    setTimeout(nextLog, 2000); 
+}
+
+// --- INITIALIZATION ---
+window.onload = () => {
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    updateClock(); 
+    updateServerStatus();
+    setInterval(updateClock, 1000); 
+    setInterval(updateServerStatus, 10000); 
+    
+    initializeMusic();
+    startTickerAnimation(taglines, taglineElement);
+    startTerminalLog();
+    startLoadingSequence(); 
+
+    applyColorScheme(colorSchemes[currentColorIndex]);
+
+    // --- TSParticles Configuration (Partikel Cyberpunk) ---
+    tsParticles.load({
+      id: "tsparticles-gtzps",
+      options: {
+         particles: {
+            color: { value: ["#00e6ff", "#ff00d4", "#00ff90"] },
+            move: { 
+                direction: "none", 
+                enable: true, 
+                outModes: { default: "bounce" }, 
+                random: true, 
+                speed: 2, 
+                straight: false, 
+                trail: { 
+                    enable: true, 
+                    length: 10, 
+                    fill: { color: { value: "#ffffff", opacity: 0.1 } } 
+                } 
+            }, 
+            number: { density: { enable: true, area: 800 }, value: 120 },
+            opacity: { value: 0.7, animation: { enable: true, speed: 0.5, sync: false, startValue: "random", destroy: "min" } },
+            shape: { type: "square" }, 
+            size: { value: { min: 1, max: 3 } }, 
+            links: { enable: false } 
+         },
+         fullScreen: { enable: false },
+         detectRetina: true,
+      },
+    }).catch(error => {
+        console.error("TSParticles failed to load:", error);
+    });
+};
+</script>
+</body>
+</html>
