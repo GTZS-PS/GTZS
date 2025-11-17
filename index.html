@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTZS Private Server - Mobile Optimized & Clean</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+
+<style>
+/* ===== KONTEN UTAMA - DIBATASI UNTUK RUMUS 9:16 (MOBILE) ===== */
+/* FIX 1: BASE FONT dan Matrix Background */
+body {
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    /* transition: filter 0.1s; /* Untuk efek glitch */ /* BARIS INI DIHAPUS */
+}
+/* NEW: Data Stream/Matrix Background (TETAP FULL SCREEN) */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1; 
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='50' font-family='monospace' font-size='12' fill='%2300ff90' text-anchor='middle'%3E1010%2C%2F%3B%3F%3C/text%3E%3C/svg%3E");
+    background-size: 50px 50px;
+    opacity: 0.03; 
+    animation: matrix-scroll 60s linear infinite;
+}
+@keyframes matrix-scroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 100vh; }
+}
+
+#main-content {
+    min-height: 100vh;
+}
+/* MODIFIKASI: Tambah overflow: hidden */
+#main-container {
+    max-width: 450px; 
+    height: auto; 
+    padding: 1rem; 
+    width: 95%; 
+    border-radius: 1rem;
+    overflow: hidden; /* PENTING: Untuk memotong efek di batas container */
+}
+
+/* Mengatur ulang posisi musik dan jam agar rapi di sudut mobile */
+#music-toggle-container {
+    top: 0.5rem;
+    left: 0.5rem;
+    position: fixed; 
+    z-index: 50;
+    transition: transform 0.3s ease; /* Untuk Magnetic Hover */
+}
+#live-clock {
+    bottom: 0.5rem;
+    left: 0.5rem;
+    font-size: 0.9rem; 
+    position: fixed; 
+    color: #00ff90; /* Warna jam */
+    text-shadow: 0 0 5px #00ff90, 0 0 10px #00ff90;
+    animation: glitch-text 3s infinite alternate; /* Tambah efek glitch */
+    z-index: 50;
+    font-family: 'Orbitron', sans-serif; 
+}
+
+/* Mengatur ulang Header untuk tampilan vertikal di mobile */
+#main-header {
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Mengatur agar Server Status tidak terlalu menjorok */
+/* UPDATED: Mengubah status container menjadi column untuk menampung Health Bar */
+#server-status-container {
+    margin-left: 0 !important;
+    margin-top: 0.5rem;
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+/* Mengubah Menu Grid menjadi 1 kolom di mobile dan 2 di layar sedang */
+#menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+    gap: 1rem; 
+}
+
+
+/* ===== Animasi konten utama & Title Blink/Glitch (UPDATED) ===== */
+.main-content-anim {animation: floaty 6s ease-in-out infinite; opacity:1;}
+@keyframes floaty {0%{transform:translateY(0px);}50%{transform:translateY(-6px);}100%{transform:translateY(0px);}}
+
+/* Efek Glitch dan Neon pada Judul */
+#main-header h1 {
+    animation: neon-blink 1.5s infinite alternate;
+    font-family: 'Orbitron', sans-serif; 
+}
+@keyframes neon-blink {
+    0% { text-shadow: 0 0 5px #fff, 0 0 10px #00e6ff; }
+    100% { text-shadow: 0 0 10px #fff, 0 0 20px #ff00d4; }
+}
+
+@keyframes glitch-text {
+    0% { transform: translate(0); text-shadow: 0 0 5px #00e6ff; }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); text-shadow: 0 0 8px #ff00d4; }
+    60% { transform: translate(3px, 0); }
+    80% { transform: translate(2px, -2px); text-shadow: 0 0 10px #00ff90; }
+    100% { transform: translate(0); }
+}
+
+/* ===== MODIFIKASI: Particle container, neon trail, grid, dan overlay DIBATASI HANYA PADA CONTAINER UTAMA ===== */
+#tsparticles-gtzps, #neon-trail, #grid-bg, #scanline-overlay, #vignette-overlay {
+    position:absolute; /* PENTING: Ubah dari fixed ke absolute */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5; /* Z-index lebih rendah dari konten utama (z-20) */
+    pointer-events:none;
+}
+#scanline-overlay, #vignette-overlay {
+    z-index: 15; /* Z-index sedikit lebih tinggi dari partikel tapi masih di bawah konten */
+}
+
+
+/* ===== About, Rules, & FAQ overlay styling & transition fix (KEEP) ===== */
+#about-overlay .whitespace-pre-wrap, 
+#rules-overlay .whitespace-pre-wrap, 
+#faq-overlay .whitespace-pre-wrap{
+    font-family:'Rajdhani',sans-serif; 
+    letter-spacing:0.5px;
+    line-height:1.6;
+    color:#fff;
+}
+/* UNIFIED: Overlay Headings */
+#rules-overlay h3, #faq-overlay h3 {
+    font-family: 'Orbitron', sans-serif;
+}
+
+
+#about-overlay, #rules-overlay, #faq-overlay{transition:opacity 0.5s ease-in-out;}
+.hidden-fade {
+    opacity: 0 !important; 
+    pointer-events: none; 
+}
+#about-overlay .line, #rules-overlay .line, #faq-overlay .line{font-weight:600; text-shadow:0 0 5px,0 0 10px,0 0 15px;}
+.line1{color:#00e6ff; text-shadow:0 0 5px #00e6ff,0 0 10px #00e6ff,0 0 20px #00e6ff;}
+.line2{color:#ff00d4; text-shadow:0 0 5px #ff00d4,0 0 10px #ff00d4,0 0 20px #ff00d4;}
+.line3{color:#9d00ff; text-shadow:0 0 5px #9d00ff,0 0 10px #9d00ff,0 0 20px #9d00ff;}
+.line4{color:#00ff90; text-shadow:0 0 5px #00ff90,0 0 10px #00ff90,0 0 20px #00ff90;}
+.line5{color:#ff8c00; text-shadow:0 0 5px #ff8c00,0 0 10px #ff8c00,0 0 20px #ff8c00;}
+.line6{color:#00ffff; text-shadow:0 0 5px #00ffff,0 0 10px #00ffff,0 0 20px #00ffff;}
+
+/* FAQ specific styling */
+.faq-q { color: #00e6ff; font-weight: bold; margin-top: 15px; margin-bottom: 5px; }
+.faq-a { color: #ffffff; margin-bottom: 10px; }
+
+/* ===== Menu items hover & New Action Button Styling (UPDATED) ===== */
+a.menu-item{transition:all 0.3s ease; position: relative;}
+a.menu-item:hover{box-shadow:0 0 20px #00e6ff,0 0 40px #ff00d4,0 0 60px #9d00ff;transform:scale(1.03);}
+
+/* UNIFIED: Menu Title (H3) and Description (P) */
+a.menu-item h3 {
+    font-family: 'Orbitron', sans-serif; 
+}
+a.menu-item p {
+    font-family: 'Rajdhani', sans-serif; 
+}
+
+/* NEW: Styling untuk tombol aksi (View/Open/Salin) */
+.menu-action-tag {
+    position: absolute;
+    top: -5px; 
+    right: -5px; 
+    text-shadow: 0 0 4px #00e6ff;
+    animation: pulse 2s infinite; 
+    border-width: 2px !important; 
+    font-family: 'Orbitron', sans-serif; 
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Hover effect for all interactive buttons (Magnetic Hover) */
+#about-btn, #rules-close, #faq-close, #about-close, #music-toggle-btn {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#music-toggle-btn:hover, #about-btn:hover, .menu-item:hover {
+    box-shadow: 0 0 10px #00e6ff, 0 0 20px #ff00d4;
+}
+
+
+/* ===== Toast notification (UPDATED) ===== */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.9);color:#00ff90;padding:10px 20px;border-radius:12px;border:1px solid #00ff90;font-family:'Rajdhani',sans-serif;opacity:0;pointer-events:none;transition:opacity 0.5s ease;z-index:60; text-shadow: 0 0 5px #00ff90;}
+
+/* ===== Grid background (UPDATED) ===== */
+#grid-bg{background-image:linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),linear-gradient(90deg, rgba(255,0,212,0.05) 1px, transparent 1px);background-size:40px 40px;}
+
+@keyframes grid-scroll {
+    from { background-position: 0 0; }
+    to { background-position: 40px 40px; } 
+}
+
+
+/* ===== Server Tagline Styling (KEEP) ===== */
+#server-tagline {
+    color: #00e6ff;
+    text-shadow: 0 0 4px #00e6ff, 0 0 8px #00e6ff, 0 0 12px #00e6ff;
+    transition: opacity 0.5s ease-in-out; 
+    font-size: 0.75rem; 
+    font-family: 'Rajdhani', sans-serif; 
+}
+#server-tagline span {
+    text-shadow: 0 0 4px #ff00d4, 0 0 8px #ff00d4, 0 0 12px #ff00d4;
+}
+.tagline-fade-out {
+    opacity: 0 !important;
+}
+
+/* ===== Server Status Indicator (UPDATED with Blink) ===== */
+.status-indicator {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+    animation: status-pulse 1.5s infinite alternate;
+}
+.status-online {
+    background-color: #00ff90; 
+    color: #00ff90;
+}
+.status-offline {
+    background-color: #ff00d4; 
+    color: #ff00d4;
+}
+.status-indicator-big { 
+    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+    animation: status-text-blink 1s infinite alternate;
+}
+
+@keyframes status-pulse {
+    0% { opacity: 0.6; box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+    100% { opacity: 1; box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+}
+@keyframes status-text-blink {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* ===== NEW: Quick Glitch Effect for Copy Action (KEEP) ===== */
+.quick-glitch {
+    animation: quick-glitch-anim 0.3s steps(2, start) forwards;
+}
+
+@keyframes quick-glitch-anim {
+    0% {
+        transform: translate(0);
+        text-shadow: 0 0 5px #ff00d4;
+    }
+    50% {
+        transform: translate(4px, -4px);
+        text-shadow: 0 0 10px #00ff90;
+        opacity: 0.9;
+    }
+    100% {
+        transform: translate(0);
+        text-shadow: 0 0 5px #00e6ff;
+        opacity: 1;
+    }
+}
+
+/* ===== Visual Overlay Effects (Vignette & Scanline) (KEEP) ===== */
+/* Properti posisi sudah dipindahkan ke blok di atas */
+#scanline-overlay {
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(255, 255, 255, 0.05) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    opacity: 0.3;
+}
+
+#vignette-overlay {
+    background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0) 55%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    opacity: 0.8;
+}
+
+/* Footer Font (Final check) */
+footer {
+    font-family: 'Rajdhani', sans-serif;
+}
+
+/* ===== TERMINAL LOG STYLING (KEEP) ===== */
+#terminal-log-container {
+    transition: opacity 0.5s ease-in-out;
+}
+#terminal-output {
+    text-shadow: 0 0 3px #00ff90;
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+/* Blinking Cursor Effect */
+.blinking-cursor {
+    color: #00ff90;
+    font-weight: bold;
+    animation: blink-caret 0.75s step-end infinite;
+}
+@keyframes blink-caret {
+    from, to { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* ===== SERVER HEALTH BAR STYLING (KEEP) ===== */
+.shadow-neon-health {
+    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+}
+.health-safe {
+    background-color: #00e6ff; /* Blue/Cyan */
+    color: #00e6ff;
+}
+.health-warning {
+    background-color: #ff8c00; /* Orange */
+    color: #ff8c00;
+    animation: pulse-health 1s infinite alternate;
+}
+.health-critical {
+    background-color: #ff00d4; /* Magenta/Red */
+    color: #ff00d4;
+    animation: pulse-health 0.5s infinite alternate;
+}
+@keyframes pulse-health {
+    0% { opacity: 0.8; }
+    100% { opacity: 1; box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+}
+
+/* ===== CUSTOM CONTEXT MENU STYLING (KEEP) ===== */
+#context-menu {
+    box-shadow: 0 0 10px #00e6ff;
+    font-family: 'Rajdhani', sans-serif; 
+    display: none; 
+    opacity: 0; 
+}
+.context-item {
+    transition: background-color 0.2s ease, text-shadow 0.2s ease;
+    font-weight: 600;
+    text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+.context-item:hover {
+    text-shadow: 0 0 5px currentColor;
+}
+
+/* ===== NEW: GLOBAL GLITCH EFFECT STYLING (DIHAPUS) ===== */
+/* Kelas glitch-active dan keyframes full-screen-glitch dihapus */
+
+
+/* Media Query untuk Layar Lebih Besar (Desktop/Tablet) */
+@media (min-width: 640px) {
+    #main-container {
+        border-radius: 2rem; 
+        min-height: 80vh; 
+        height: auto;
+    }
+    #main-header {
+        flex-direction: row; 
+        align-items: center;
+        gap: 1rem;
+    }
+    #music-toggle-container {
+        top: 1.5rem;
+        left: 1.5rem;
+    }
+    #live-clock {
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 1.125rem;
+    }
+    #server-tagline {
+        font-size: 0.875rem; 
+    }
+}
+/* Menyembunyikan Terminal Log di Mobile */
+@media (max-width: 1024px) {
+    #terminal-log-container {
+        display: none !important;
+    }
+}
+</style>
+</head>
+<body class="bg-black">
+
+<audio id="bg-music" loop>
+<source src="https://files.catbox.moe/e3zea4.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="click-fx" preload="auto">
+    <source src="https://files.catbox.moe/k3b79l.mp3" type="audio/mpeg">
+</audio>
+<audio id="glitch-fx" preload="auto">
+    <source src="https://files.catbox.moe/d3p3e1.mp3" type="audio/mpeg">
+</audio>
+
+<div id="music-toggle-container" class="absolute z-30">
+<button id="music-toggle-btn" class="flex items-center gap-2 px-2 py-1 bg-black/40 backdrop-blur rounded-xl border border-[#00e6ff] hover:scale-105 transition-transform duration-300">
+<img id="music-btn-img" src="https://files.catbox.moe/o8bf91.jpg" class="w-6 h-6 rounded-full object-cover">
+<span id="music-status" class="text-xs font-semibold tracking-wider text-white">Play Music</span>
+</button>
+</div>
+
+<div id="toast"></div>
+
+<div id="about-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+<div class="relative max-w-sm w-[90%] p-5 bg-black/70 border border-[#00e6ff] rounded-xl shadow-2xl text-xs">
+<button id="about-close" class="absolute top-2 right-2 text-[#ff00d4] font-bold text-lg">✖</button>
+<div class="whitespace-pre-wrap">
+<div class="line line1 text-sm">⚜️✨ CARA JOIN SERVER GTZS ✨⚜️</div>
+<div class="line line2">🌐 1️⃣ Buka menu Server</div>
+<div class="line line3">🏷️ 2️⃣ Masukkan nama server: GTZS</div>
+<div class="line line4">🧾 3️⃣ Tekan Register / Daftar</div>
+<div class="line line5">👤 4️⃣ Buat GrowID & Password</div>
+<div class="line line6">📧 5️⃣ Masukkan Email aktif</div>
+<div class="line line1">🎮 6️⃣ Selamat! Server siap dimainkan 🎉</div>
+</div>
+</div>
+</div>
+
+<div id="rules-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+    <div class="relative max-w-sm sm:max-w-md w-[90%] p-5 bg-black/70 border border-[#ff00d4] rounded-xl shadow-2xl text-xs overflow-y-auto max-h-[90vh]">
+        <button id="rules-close" class="absolute top-2 right-2 text-[#00e6ff] font-bold text-lg">✖</button>
+        
+        <h3 class="line line2 text-lg text-center mb-3">🔒 SERVER RULES & POLICY</h3>
+        
+        <div class="whitespace-pre-wrap text-white text-sm" id="rules-content">
+            </div>
+
+    </div>
+</div>
+
+<div id="faq-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-fade"> 
+    <div class="relative max-w-sm sm:max-w-md w-[90%] p-5 bg-black/70 border border-[#00ff90] rounded-xl shadow-2xl text-xs overflow-y-auto max-h-[90vh]">
+        <button id="faq-close" class="absolute top-2 right-2 text-[#ff8c00] font-bold text-lg">✖</button>
+        
+        <h3 class="line line4 text-lg text-center mb-3">❓ FAQ (TANYA JAWAB GTZS)</h3>
+        
+        <div class="whitespace-pre-wrap text-white text-sm" id="faq-content">
+            </div>
+
+    </div>
+</div>
+
+
+<main id="main-content" class="main-content-anim relative z-20 flex items-center justify-center p-2" 
+style="background-image:url('https://files.catbox.moe/2wqmke.jpeg'); background-size:cover; background-position:center;">
+<div id="main-container" class="relative z-10 w-full bg-black/50 border border-[#00e6ff]/20 shadow-2xl backdrop-blur-md overflow-hidden">
+    
+    <div id="grid-bg"></div>
+    <div id="tsparticles-gtzps"></div>
+    <canvas id="neon-trail"></canvas>
+
+    <div id="scanline-overlay"></div>
+    <div id="vignette-overlay"></div>
+    <div class="relative z-20"> 
+        <header id="main-header" class="flex items-center justify-between p-2 sm:p-4">
+        <div class="flex items-start gap-3 w-full"> 
+            <img src="https://files.catbox.moe/o8bf91.jpg" class="w-10 h-10 rounded-lg border border-[#00e6ff]/40">
+            <div class="flex flex-col items-start w-full"> 
+                <h1 class="text-xl sm:text-2xl font-extrabold text-white">GTZS PRIVATE SERVER</h1>
+                <h2 id="server-tagline" class="text-xs sm:text-sm font-semibold tracking-wider uppercase mt-1 tagline-fade-out">
+                    &nbsp;
+                </h2>
+            </div>
+        </div>
+            
+        <div class="flex flex-row items-center justify-between w-full mt-2">
+            <div id="server-status-container" class="flex flex-col gap-2 font-semibold text-xs tracking-widest w-full"> 
+                
+                <div class="flex flex-row items-center justify-start gap-3 w-full">
+                    <div id="player-count" class="text-white">PLAYERS: <span class="text-[#00ff90] text-sm font-bold">LOADING...</span></div>
+                    <div id="server-status" class="text-white">STATUS: <span class="status-indicator rounded-full w-2 h-2 inline-block mr-1"></span> <span class="text-[#00ff90] font-bold">LOADING...</span></div>
+                </div>
+                
+                <div id="health-bar-wrapper" class="w-full sm:w-[80%] flex items-center gap-2 mt-1">
+                    <span class="text-white">LOAD:</span>
+                    <div class="flex-grow h-3 border border-[#00e6ff] bg-black/50 rounded-sm">
+                        <div id="server-health-bar" class="h-full w-0 transition-all duration-1000 ease-out shadow-neon-health health-safe"></div>
+                    </div>
+                    <span id="health-percent" class="text-[#00e6ff]">0%</span>
+                </div>
+                </div>
+            
+            <nav class="text-sm flex items-center gap-3 text-white ml-auto">
+                <button id="about-btn" class="text-xs px-2 py-1 rounded-lg border border-[#00e6ff]/20 hover:border-[#00e6ff]">About</button>
+            </nav>
+        </div>
+        </header>
+
+        <section id="menu-grid" class="p-4 grid gap-3"></section>
+
+        <div id="live-clock">00:00:00</div>
+
+        <footer class="mt-2 text-xs text-[#8fe6ff] opacity-90 flex items-center justify-center p-2">
+        <div>© <span id="current-year"></span> GTZS - PS | Licensi GTZS STAFF</div>
+        </footer>
+    </div>
+</div>
+</main>
+
+<div id="terminal-log-container" class="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 z-50 p-3 w-[200px] sm:w-[250px] bg-black/70 border border-[#00ff90]/30 shadow-2xl shadow-[#00ff90]/20 rounded-lg backdrop-blur-sm hidden lg:block">
+    <div id="terminal-output" class="text-[#00ff90] text-xs font-mono h-[80px] overflow-hidden whitespace-pre-wrap">
+        </div>
+    <div class="absolute bottom-0 right-0 p-1 text-[8px] text-[#00ff90]/50">GTZS_ADMIN_LOG</div>
+</div>
+
+<div id="context-menu" class="fixed z-[99] bg-black/90 backdrop-blur-sm border border-[#00e6ff] shadow-xl rounded-lg p-2 text-xs flex-col transition-opacity duration-150">
+    <div class="context-item text-[#00e6ff] hover:bg-[#00e6ff]/20 px-3 py-1 cursor-pointer rounded" data-action="copy-ip">🔗 COPY SERVER LINK</div>
+    <div class="context-item text-[#ff00d4] hover:bg-[#ff00d4]/20 px-3 py-1 cursor-pointer rounded mt-1" data-action="open-rules">📜 VIEW RULES</div>
+    <div class="context-item text-[#00ff90] hover:bg-[#00ff90]/20 px-3 py-1 cursor-pointer rounded mt-1" data-action="contact-admin">👤 CONTACT ADMIN 1</div>
+    <div class="context-item text-[#ff8c00] hover:bg-[#ff8c00]/20 px-3 py-1 cursor-pointer rounded mt-1" data-action="show-faq">❓ SHOW FAQ</div>
+</div>
+
+
+<script>
+// ===== Music Toggle (KEEP ORIGINAL LOGIC) =====
+const music=document.getElementById("bg-music");
+let isMusicPlaying=false;
+const musicBtnImg=document.getElementById("music-btn-img");
+document.getElementById("music-toggle-btn").onclick=function(){
+const text=document.getElementById("music-status");
+if(isMusicPlaying){music.pause();text.textContent="Play Music";musicBtnImg.style.borderColor="#00e6ff";}
+else{music.play();text.textContent="Stop Music";musicBtnImg.style.borderColor="#ff00d4";}
+isMusicPlaying=!isMusicPlaying;
+};
+
+// ===== Menu Items & Toast (MENU LENGKAP - KEEP) =====
+const menuData=[
+// Menu 1: Server Rules & Policy 
+{ title:"Server Rules & Policy", desc:"Peraturan Server, Sanksi & Kebijakan Anti-Cheat", href:"#", icon:"https://files.catbox.moe/hf3p8d.jpg", isRules:true }, 
+// Menu 2: Report Bug & Error (TERHUBUNG KE ADMIN 1)
+{ title:"Report Bug & Error", desc:"Lapor masalah teknis & server error di sini", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/4pga9m.jpg" },
+// Menu 3: FAQ (Tanya Jawab) (OVERLAY FAQ)
+{ title:"FAQ (Tanya Jawab)", desc:"Lihat Pertanyaan Umum Seputar Server GTZS", href:"#", icon:"https://files.catbox.moe/7bjjv9.jpg", isFAQ:true },
+// Menu lama yang sudah ada (tetap):
+{ title:"WhatsApp Community", desc:"Grup komunitas, diskusi & pengumuman", href:"https://chat.whatsapp.com/G8tlqptaoe35llqmeazr34?mode=wwt", icon:"https://files.catbox.moe/t46g6s.jpg" },
+{ title:"Virtual Host", desc:"Panel host virtual & resources", href:"https://www.mediafire.com/file/y8iwyfytisu9fah/GTZS+BETA.txt/file", icon:"https://files.catbox.moe/rcxspu.tmp" },
+{ title:"Power Tunnel", desc:"Jalur akses & optimasi", href:"https://eu.panel.growsoft.cc/android/2784", isCopy:true, icon:"https://files.catbox.moe/82j6ay.jpg" },
+{ title:"Admin 1", desc:"Kontak admin utama", href:"https://wa.me/6282229019195", icon:"https://files.catbox.moe/6k8owo.jpg" }, 
+{ title:"Admin 2", desc:"Kontak admin cadangan", href:"https://wa.me/6285166991453", icon:"https://files.catbox.moe/6k8owo.jpg" }
+];
+
+const menuGrid=document.getElementById("menu-grid");
+const toast=document.getElementById("toast");
+const clickFx = document.getElementById('click-fx');
+const glitchFx = document.getElementById('glitch-fx');
+const mainTitle = document.querySelector('#main-header h1');
+const scrambleChars = '!@#$%^&*()_+-=[]{};:|,.<>/?`~ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+
+
+// ===== KONTEN PERATURAN SERVER (RULES OVERLAY - KEEP) =====
+const serverRulesContent = `
+=========================================
+      1. KETENTUAN DASAR & ACCOUNT
+=========================================
+1.1. Kepemilikan Akun: Tanggung jawab penuh atas keamanan GrowID dan password ada pada pemain. Staff tidak bertanggung jawab atas kehilangan akun akibat kelalaian (phishing, sharing).
+
+1.2. Email Terdaftar: Gunakan email aktif. Kehilangan akses atau kesalahan email adalah risiko pemain.
+
+1.3. Larangan Trading Real World Items (RWT): Dilarang keras melakukan transaksi item di server ini menggunakan uang asli (Rupiah/mata uang lain).
+Sanksi: BAN PERMANEN tanpa pengecualian.
+
+=========================================
+      2. CHEATING & EXPLOITASI BUG
+=========================================
+2.1. Program Ilegal (Cheating): Penggunaan program pihak ketiga (seperti auto-clicker/bot yang dilarang, speed hack, fly hack, dll.) DILARANG KERAS.
+Sanksi: BAN PERMANEN.
+
+2.2. Exploitasi Bug: Menemukan bug (kesalahan sistem)? Laporkan segera ke Staff/Report Bug Menu. Mencoba atau menyebarkan cara exploitasi bug untuk keuntungan pribadi akan dikenakan sanksi.
+Sanksi: BAN SEMENTARA hingga PERMANEN (tergantung tingkat kerugian server).
+
+=========================================
+      3. ETIKA KOMUNITAS (CHAT)
+=========================================
+3.1. Spam & Flood: Dilarang melakukan spam chat, mengirim pesan berulang-ulang, atau promosi server lain.
+Sanksi: MUTE/BAN SEMENTARA.
+
+3.2. Ucapan Kotor/SARA: Dilarang menggunakan bahasa kotor, diskriminasi (SARA), atau tindakan yang menyerang privasi/ras/agama pemain lain.
+Sanksi: MUTE/BAN SEMENTARA hingga PERMANEN.
+
+=========================================
+    4. KEBIJAKAN DONASI (JIKA ADA)
+=========================================
+4.1. Refund: Semua donasi yang masuk adalah final dan tidak dapat di-refund/ditarik kembali dengan alasan apapun. Donasi murni untuk pengembangan server.
+
+4.2. Ban Akun: Jika akun yang berdonasi terkena BAN karena melanggar aturan (Cheating/RWT), donasi yang telah diberikan TIDAK dapat dikembalikan.
+`;
+document.getElementById('rules-content').textContent = serverRulesContent;
+
+
+// ===== KONTEN FAQ (FAQ OVERLAY - KEEP) =====
+const faqContent = `
+<div class="faq-q">Q: Apa itu GTZS Private Server?</div>
+<div class="faq-a">A: GTZS adalah server Growtopia Private (PS) yang menawarkan fitur dan pengalaman bermain unik dengan rate farming yang ditingkatkan, item eksklusif, dan event komunitas reguler.</div>
+
+<div class="faq-q">Q: Apakah server ini gratis untuk dimainkan?</div>
+<div class="faq-a">A: Ya, GTZS 100% gratis untuk dimainkan. Kami mendukung pengembangan server melalui donasi opsional (lihat Server Rules, bagian 4).</div>
+
+<div class="faq-q">Q: Bagaimana cara terhubung ke server ini?</div>
+<div class="faq-a">A: Buka klien Growtopia, pilih menu Server, dan masukkan nama server **GTZS**. Pastikan Anda sudah mendaftar GrowID dan memasukkan email aktif.</div>
+
+<div class="faq-q">Q: Item-item saya hilang setelah update/restart server. Kenapa?</div>
+<div class="faq-a">A: Kehilangan item sangat jarang terjadi. Pastikan Anda tidak melakukan *RWT* atau *sharing* akun. Jika yakin ini adalah *bug*, segera laporkan melalui menu **Report Bug & Error**.</div>
+
+<div class="faq-q">Q: Mengapa saya di-BAN?</div>
+<div class="faq-a">A: Cek kembali **Server Rules & Policy**. BAN biasanya dikenakan karena *cheating*, *exploiting*, atau *RWT*. Jika Anda merasa di-BAN tanpa alasan, hubungi admin melalui WhatsApp untuk banding.</div>
+
+<div class="faq-q">Q: Di mana saya bisa mendapatkan informasi update terbaru?</div>
+<div class="faq-a">A: Semua pengumuman penting, event, dan update server diumumkan secara resmi di **WhatsApp Community** dan in-game message.</div>
+`;
+document.getElementById('faq-content').innerHTML = faqContent; 
+
+
+// ===== FUNGSI CLICK SOUND EFFECT =====
+function playClickSound() {
+    if (clickFx) {
+        clickFx.currentTime = 0; 
+        clickFx.play().catch(e => console.warn("Click sound blocked or failed:", e));
+    }
+}
+
+// ===== FUNGSI GLITCH SCREEN EFFECT (BARU) - KINI HANYA MEMUTAR SUARA =====
+function triggerGlitchEffect() {
+    // Play sound effect
+    if (glitchFx) {
+        glitchFx.currentTime = 0;
+        glitchFx.play().catch(e => console.warn("Glitch sound blocked or failed:", e));
+    }
+    // Glitch animation code dihilangkan untuk menonaktifkan efek flicker.
+}
+
+// ===== FUNGSI SHOW TOAST (UPDATED WITH GLITCH EFFECT) =====
+function showToast(msg){
+    toast.textContent=msg;
+    toast.style.opacity="1";
+    
+    if (msg.includes('disalin')) {
+        playClickSound(); 
+        mainTitle.classList.add('quick-glitch');
+        
+        setTimeout(() => {
+            mainTitle.classList.remove('quick-glitch');
+        }, 300); 
+    } else {
+        playClickSound(); 
+    }
+    
+    setTimeout(()=>{
+        toast.style.opacity="0";
+    },1500);
+}
+
+
+// ===== Menu Grid Render (UPDATED with Tag Style) =====
+menuGrid.innerHTML=menuData.map(item=>{
+let actionText = '';
+let actionClass = '';
+let clickHandler = '';
+
+// Tentukan teks, warna, dan handler untuk tombol aksi
+if (item.isRules) {
+    actionText = 'VIEW';
+    actionClass = 'border-[#ff00d4] text-[#ff00d4]';
+    clickHandler = `id="rules-btn"`;
+} else if (item.isFAQ) {
+    actionText = 'VIEW';
+    actionClass = 'border-[#00ff90] text-[#00ff90]';
+    clickHandler = `id="faq-btn"`;
+} else if (item.isCopy) {
+    actionText = 'SALIN';
+    actionClass = 'border-[#ff8c00] text-[#ff8c00]';
+    // Gunakan showToast untuk salin, yang di dalamnya sudah memanggil playClickSound
+    clickHandler = `onclick="navigator.clipboard.writeText('${item.href}'); showToast('Link disalin!');"`; 
+} else {
+    actionText = 'OPEN';
+    actionClass = 'border-[#00e6ff] text-[#00e6ff]';
+    // Tambahkan playClickSound untuk tautan biasa
+    clickHandler = `href='${item.href}' target='_blank' onclick='playClickSound();'`; 
+}
+
+let contentHTML=`<div class='flex items-start gap-3'>
+<img src='${item.icon}' class='w-10 h-10 sm:w-12 sm:h-12 rounded-lg border border-[#00e6ff]/30 object-cover'>
+<div><h3 class='text-base sm:text-lg font-semibold text-white'>${item.title}</h3>
+<p class='text-xs sm:text-sm text-[#9fdcff]'>${item.desc}</p></div></div>`;
+    
+    return `<a ${clickHandler} class='menu-item block p-4 sm:p-5 rounded-xl border border-[#00e6ff]/15 bg-black/30 backdrop-blur relative ${!item.isCopy && !item.isRules && !item.isFAQ ? '' : 'cursor-pointer'}'>` +
+           contentHTML +
+           `<div class='menu-action-tag absolute text-xs px-3 py-1 rounded-full bg-black/70 border ${actionClass} font-bold'>${actionText}</div>` +
+           `</a>`;
+}).join('');
+
+
+// ===== LIVE CLOCK (KEEP ORIGINAL LOGIC) =====
+function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('live-clock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// ===============================================
+// ===== HEALTH BAR LOGIC (DITAMBAHKAN) =====
+// ===============================================
+
+function updateHealthBar(isOnline) {
+    const healthBar = document.getElementById('server-health-bar');
+    const healthPercentText = document.getElementById('health-percent');
+    let loadPercent;
+    let healthClass = 'health-safe';
+    let percentClass = 'text-[#00e6ff]';
+
+    if (isOnline) {
+        // Beban server normal (40% hingga 75%)
+        loadPercent = Math.floor(Math.random() * (75 - 40 + 1)) + 40;
+        if (loadPercent > 65) {
+            healthClass = 'health-warning'; // Peringatan (Orange)
+            percentClass = 'text-[#ff8c00]';
+        }
+    } else {
+        // Beban server Kritis/Gagal (95% hingga 100%)
+        loadPercent = Math.floor(Math.random() * (100 - 95 + 1)) + 95;
+        healthClass = 'health-critical'; // Kritis (Magenta/Red)
+        percentClass = 'text-[#ff00d4]';
+    }
+
+    // Terapkan visual update
+    healthBar.style.width = `${loadPercent}%`;
+    // Gunakan replace untuk menghapus class sebelumnya dan menerapkan yang baru
+    healthBar.className = healthBar.className.replace(/health-(safe|warning|critical)/g, '').replace(/shadow-neon-health/g, '').trim();
+    healthBar.classList.add('shadow-neon-health', healthClass);
+    
+    healthPercentText.textContent = `${loadPercent}%`;
+    healthPercentText.className = percentClass;
+}
+
+// Variabel untuk melacak status sebelumnya
+let wasOnline = true; 
+
+// ===== SERVER STATUS & PLAYER COUNT SIMULATION (MODIFIED to call Glitch) =====
+function updateServerStatus() {
+    // 90% kemungkinan online
+    const isOnline = Math.random() < 0.9; 
+    const playerCountElement = document.querySelector('#player-count span');
+    const statusElement = document.querySelector('#server-status .status-indicator');
+    const statusTextElement = document.querySelector('#server-status span:last-child');
+
+    if (isOnline) {
+        const players = Math.floor(Math.random() * (500 - 150 + 1)) + 150; 
+        playerCountElement.textContent = players.toLocaleString();
+        playerCountElement.className = 'text-[#00ff90] text-sm font-bold status-indicator-big';
+        
+        statusElement.className = 'status-indicator rounded-full w-2 h-2 inline-block mr-1 status-online';
+        statusTextElement.textContent = 'ONLINE';
+        statusTextElement.className = 'text-[#00ff90] font-bold status-indicator-big';
+    } else {
+        // DETEKSI KEGAGALAN: Jika sebelumnya online dan sekarang offline
+        if (wasOnline) {
+            triggerGlitchEffect(); // Hanya memutar suara glitch
+        }
+        
+        playerCountElement.textContent = '0';
+        playerCountElement.className = 'text-[#ff00d4] text-sm font-bold status-indicator-big';
+        
+        statusElement.className = 'status-indicator rounded-full w-2 h-2 inline-block mr-1 status-offline';
+        statusTextElement.textContent = 'OFFLINE';
+        statusTextElement.className = 'text-[#ff00d4] font-bold status-indicator-big';
+    }
+    
+    // Perbarui status sebelumnya
+    wasOnline = isOnline;
+    
+    // Panggil Health Bar update
+    updateHealthBar(isOnline);
+}
+
+// ===== TAGLINE CYCLING (KEEP ORIGINAL LOGIC) =====
+const taglineElement = document.getElementById('server-tagline');
+const taglines = [
+    "Welcome to GTZS Private Server 🎮",
+    "Farming Rate up ⚡ Item Exclusive",
+    "Join our community chat now! 💬",
+    "Private & Clean - Mobile Optimized",
+    "Play fair and have fun! ✨"
+];
+let currentTaglineIndex = 0;
+
+function taglineCycle() {
+    taglineElement.classList.add('tagline-fade-out'); 
+    setTimeout(() => {
+        currentTaglineIndex = (currentTaglineIndex + 1) % taglines.length;
+        taglineElement.innerHTML = taglines[currentTaglineIndex];
+        taglineElement.classList.remove('tagline-fade-out'); 
+    }, 500); 
+}
+taglineElement.innerHTML = taglines[currentTaglineIndex];
+taglineElement.classList.remove('tagline-fade-out'); 
+setInterval(taglineCycle, 5000); 
+
+
+// ===== Event Listeners (About, Rules, FAQ - KEEP ORIGINAL LOGIC) =====
+document.getElementById('about-btn').onclick = () => document.getElementById('about-overlay').classList.remove('hidden-fade');
+document.getElementById('about-close').onclick = () => document.getElementById('about-overlay').classList.add('hidden-fade');
+
+const rulesBtn = document.getElementById('rules-btn');
+if (rulesBtn) {
+    rulesBtn.onclick = (e) => {
+        e.preventDefault(); 
+        document.getElementById('rules-overlay').classList.remove('hidden-fade');
+    };
+}
+document.getElementById('rules-close').onclick = () => document.getElementById('rules-overlay').classList.add('hidden-fade');
+
+const faqBtn = document.getElementById('faq-btn');
+if (faqBtn) {
+    faqBtn.onclick = (e) => {
+        e.preventDefault();
+        document.getElementById('faq-overlay').classList.remove('hidden-fade');
+    };
+}
+document.getElementById('faq-close').onclick = () => document.getElementById('faq-overlay').classList.add('hidden-fade');
+
+// ===== LOGIC MAGNETIC HOVER (DITAMBAHKAN) =====
+const magneticButtons = ['music-toggle-btn', 'about-btn', 'rules-close', 'faq-close', 'about-close'];
+const maxDistance = 70; 
+const maxMove = 8; 
+
+document.addEventListener('mousemove', (e) => {
+    magneticButtons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+
+        const rect = btn.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distanceX = e.clientX - centerX;
+        const distanceY = e.clientY - centerY;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        if (distance < maxDistance) {
+            const strength = 1 - (distance / maxDistance);
+            const moveX = (distanceX / distance) * maxMove * strength * -1; 
+            const moveY = (distanceY / distance) * maxMove * strength * -1;
+            
+            btn.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+            btn.style.transition = 'transform 0.1s ease-out';
+        } else {
+            btn.style.transform = '';
+            btn.style.transition = 'transform 0.3s ease';
+        }
+    });
+});
+
+// ===== EFEK DEKRIPSI TEKS (TEXT SCRAMBLE HOVER - DITAMBAHKAN) =====
+function scrambleText(element, originalText, duration = 300) {
+    let startTime = null;
+
+    function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const progress = elapsed / duration;
+
+        if (progress < 1) {
+            let scrambledText = '';
+            const clearChars = Math.floor(originalText.length * progress);
+
+            for (let i = 0; i < originalText.length; i++) {
+                if (i < clearChars) {
+                    scrambledText += originalText[i];
+                } else {
+                    const randomIndex = Math.floor(Math.random() * scrambleChars.length);
+                    scrambledText += scrambleChars[randomIndex];
+                }
+            }
+
+            element.textContent = scrambledText;
+            requestAnimationFrame(animate);
+        } else {
+            element.textContent = originalText;
+        }
+    }
+    requestAnimationFrame(animate);
+}
+
+// Pasang Event Listener Scramble pada setiap item menu
+window.addEventListener('load', () => {
+    const menuItems = document.querySelectorAll('.menu-item');
+
+    menuItems.forEach(item => {
+        const titleElement = item.querySelector('h3');
+        if (!titleElement) return;
+
+        const originalTitle = titleElement.textContent;
+        let isScrambling = false;
+        
+        item.addEventListener('mouseover', () => {
+            if (!isScrambling) {
+                isScrambling = true;
+                scrambleText(titleElement, originalTitle, 400); 
+                
+                setTimeout(() => {
+                    isScrambling = false;
+                }, 400); 
+            }
+        });
+
+        item.addEventListener('mouseout', () => {
+            titleElement.textContent = originalTitle;
+            isScrambling = false;
+        });
+    });
+});
+
+// ===============================================
+// ===== ANIMATED TERMINAL LOG FEATURE (DITAMBAHKAN) =====
+// ===============================================
+const logMessages = [
+    "--------------------------------------",
+    "[SYS] Initializing Network Daemon...",
+    "[PING] Checking server status... OK.",
+    "[DB] Loaded 500+ player profiles.",
+    "[TASK] Running integrity check on v1.2...",
+    "[CONFIG] Applying security patch 3.0...",
+    "[SUCCESS] System boot complete. Ready.",
+    "[TIME] Current local time sync: " + new Date().toLocaleTimeString(),
+    "--------------------------------------",
+];
+const terminalOutput = document.getElementById('terminal-output');
+let currentLogIndex = 0;
+const typingSpeed = 30; // Kecepatan ketikan (ms per karakter)
+const logInterval = 2000; // Jeda antar log (ms)
+
+function typeMessage(message, callback) {
+    let i = 0;
+    const cursor = '<span class="blinking-cursor">_</span>';
+    
+    // FIX BUG: Pengecekan null di sini untuk menghindari error jika elemen hilang
+    if(terminalOutput) { 
+        terminalOutput.innerHTML = terminalOutput.innerHTML.replace(/<span class="blinking-cursor">_<\/span>/g, '') + cursor;
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+
+    function typing() {
+        if (!terminalOutput) return; 
+        
+        if (i < message.length) {
+            terminalOutput.innerHTML = terminalOutput.innerHTML.slice(0, -cursor.length) + message.charAt(i) + cursor;
+            terminalOutput.scrollTop = terminalOutput.scrollHeight; 
+            i++;
+            setTimeout(typing, typingSpeed);
+        } else {
+            terminalOutput.innerHTML = terminalOutput.innerHTML.replace(/<span class="blinking-cursor">_<\/span>/, '');
+            if (callback) {
+                setTimeout(callback, logInterval);
+            }
+        }
+    }
+    typing();
+}
+
+function startTerminalLog() {
+    // FIX BUG: Pengecekan null untuk menghindari error runtime
+    if (!terminalOutput) return; 
+
+    const maxLines = 4;
+    function appendLine(line) {
+        if (!terminalOutput) return;
+        
+        const currentContent = terminalOutput.innerHTML.split('\n');
+        const cleanContent = currentContent.filter(l => !l.includes('blinking-cursor'));
+
+        if (cleanContent.length >= maxLines) {
+            cleanContent.shift();
+        }
+        
+        terminalOutput.innerHTML = cleanContent.join('\n') + '\n';
+        
+        typeMessage(line, null);
+    }
+    
+    appendLine('> GTZS Console v1.0 Initiated.');
+
+    function processNextLog() {
+        if (!terminalOutput) return;
+        
+        if (currentLogIndex >= logMessages.length) {
+            currentLogIndex = 0; 
+            
+            setTimeout(function() {
+                 appendLine('> Rebooting log sequence...');
+                 setTimeout(processNextLog, logInterval);
+            }, 8000); 
+            return;
+        }
+
+        let logMsg = logMessages[currentLogIndex];
+        
+        if (logMsg.includes("[TIME]")) {
+            logMsg = "[TIME] Current local time sync: " + new Date().toLocaleTimeString();
+        }
+
+        appendLine(logMsg);
+        currentLogIndex++;
+        
+        setTimeout(processNextLog, logInterval + (logMsg.length * typingSpeed)); 
+    }
+
+    setTimeout(processNextLog, logInterval * 2); 
+}
+
+// ===============================================
+// ===== CUSTOM CONTEXT MENU LOGIC (DITAMBAHKAN) =====
+// ===============================================
+const contextMenu = document.getElementById('context-menu');
+
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault(); 
+    
+    if (e.target.closest('#context-menu') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    let x = e.clientX;
+    let y = e.clientY;
+
+    if (x + menuWidth > window.innerWidth) {
+        x -= menuWidth;
+    }
+    if (y + menuHeight > window.innerHeight) {
+        y -= menuHeight;
+    }
+
+    contextMenu.style.top = `${y}px`;
+    contextMenu.style.left = `${x}px`;
+    contextMenu.classList.remove('hidden');
+    contextMenu.style.opacity = '0';
+    setTimeout(() => {
+        contextMenu.style.opacity = '1';
+        contextMenu.style.display = 'flex'; 
+    }, 10);
+});
+
+document.addEventListener('click', function() {
+    contextMenu.style.opacity = '0';
+    setTimeout(() => {
+        contextMenu.classList.add('hidden');
+        contextMenu.style.display = 'none';
+    }, 150);
+});
+
+document.addEventListener('scroll', function() {
+    contextMenu.classList.add('hidden');
+    contextMenu.style.display = 'none';
+});
+
+// Aksi ketika item di menu diklik
+contextMenu.addEventListener('click', function(e) {
+    const actionElement = e.target.closest('.context-item');
+    if (!actionElement) return;
+
+    const action = actionElement.getAttribute('data-action');
+    
+    contextMenu.classList.add('hidden');
+    contextMenu.style.display = 'none';
+    
+    switch (action) {
+        case 'copy-ip':
+            const copyLink = "https://eu.panel.growsoft.cc/android/2784"; 
+            navigator.clipboard.writeText(copyLink);
+            showToast('Link Power Tunnel disalin!');
+            break;
+        case 'open-rules':
+            document.getElementById('rules-overlay').classList.remove('hidden-fade');
+            break;
+        case 'contact-admin':
+            window.open('https://wa.me/6282229019195', '_blank'); 
+            playClickSound();
+            break;
+        case 'show-faq':
+            document.getElementById('faq-overlay').classList.remove('hidden-fade');
+            break;
+    }
+});
+
+
+// ===============================================
+// ===== FINAL INITIALIZATION (LOAD ASSET) =====
+// ===============================================
+
+function startNeonTrail() {
+    const neonTrailCanvas = document.getElementById('neon-trail');
+    const ctx = neonTrailCanvas.getContext('2d');
+    let trail = [];
+    let maxTrailLength = 15; 
+
+    function resizeCanvas() {
+        const container = neonTrailCanvas.parentElement; 
+        if (container) {
+            neonTrailCanvas.width = container.clientWidth;
+            neonTrailCanvas.height = container.clientHeight;
+        } else {
+            neonTrailCanvas.width = window.innerWidth;
+            neonTrailCanvas.height = window.innerHeight;
+        }
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    document.addEventListener('mousemove', (e) => {
+        const container = neonTrailCanvas.parentElement;
+        if (!container) return;
+
+        const rect = container.getBoundingClientRect();
+        
+        // PENTING: Hitung koordinat relatif terhadap container
+        const relativeX = e.clientX - rect.left;
+        const relativeY = e.clientY - rect.top;
+
+        // Hanya tambahkan trail jika berada di dalam bounds container
+        if (relativeX >= 0 && relativeX <= rect.width && relativeY >= 0 && relativeY <= rect.height) {
+            trail.push({ x: relativeX, y: relativeY, opacity: 1, size: 5, color: `hsl(${Math.random() * 360}, 100%, 70%)` });
+            if (trail.length > maxTrailLength) {
+                trail.shift();
+            }
+        }
+    });
+
+    function drawTrail() {
+        ctx.clearRect(0, 0, neonTrailCanvas.width, neonTrailCanvas.height);
+
+        for (let i = 0; i < trail.length; i++) {
+            let p = trail[i];
+            p.opacity *= 0.9;
+            p.size *= 0.95;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity * 0.2})`;
+            ctx.fill();
+
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = p.color;
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.opacity;
+            ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.closePath();
+            
+            ctx.shadowBlur = 0; 
+            ctx.globalAlpha = 1; 
+        }
+        trail = trail.filter(p => p.size > 0.5);
+        requestAnimationFrame(drawTrail);
+    }
+    drawTrail();
+}
+
+
+window.onload = () => {
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    // Panggil updateStatus dan Clock agar berjalan
+    updateClock();
+    updateServerStatus();
+    setInterval(updateClock, 1000); 
+    // Health Bar/Glitch akan terupdate setiap 10 detik mengikuti Server Status
+    setInterval(updateServerStatus, 10000); 
+    
+    // --- 1. TSParticles Configuration ---
+    tsParticles.load({
+      id: "tsparticles-gtzps",
+      options: {
+         particles: {
+            color: { value: ["#00e6ff", "#ff00d4", "#00ff90"] },
+            move: { direction: "none", enable: true, outModes: { default: "bounce" }, random: true, speed: 1.5, straight: false, trail: { enable: true, length: 10, fill: { color: "#ffffff" } } }, 
+            number: { density: { enable: true, area: 800 }, value: 100 },
+            opacity: { value: 0.7, animation: { enable: true, speed: 0.5, sync: false, startValue: "random", destroy: "min" } },
+            shape: { type: "square" }, 
+            size: { value: { min: 1, max: 4 } },
+            links: { enable: false }
+         },
+         fullScreen: { enable: false }, // PENTING: Dibuat false agar menyesuaikan ukuran div induk
+         detectRetina: true,
+      },
+    }).catch(error => {
+        console.error("TSParticles failed to load:", error);
+    });
+
+    // 2. Start Neon Cursor Trail
+    startNeonTrail();
+    
+    // 3. Start Terminal Log (Sudah diperbaiki dari error runtime)
+    startTerminalLog();
+};
+</script>
+</body>
+</html>
